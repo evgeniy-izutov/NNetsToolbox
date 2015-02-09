@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3CAC5360-1E38-4486-86F1-75C8E7B5E389}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GeneticAlgorithm</RootNamespace>
+    <AssemblyName>GeneticAlgorithm</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BestFitness\BestFitness.cs" />
+    <Compile Include="BestFitness\IBestFitness.cs" />
+    <Compile Include="ChromosomesDistribution\ChromosomesDistribution.cs" />
+    <Compile Include="ChromosomesDistribution\IChromosomesDistribution.cs" />
+    <Compile Include="InitilizeProperties\IInitilizeProperties.cs" />
+    <Compile Include="InitilizeProperties\InitilizeProperties.cs" />
+    <Compile Include="Operators\Crossover\ArithmeticCrossover.cs" />
+    <Compile Include="Operators\Crossover\BlXalphaCrossoverWithBorder.cs" />
+    <Compile Include="Operators\Crossover\BlXalphaCrossoverWithoutBorder.cs" />
+    <Compile Include="Operators\Crossover\FullCrossover.cs" />
+    <Compile Include="Operators\Crossover\ICrossoverOperator.cs" />
+    <Compile Include="FitnessFunction\IFitnessFunction.cs" />
+    <Compile Include="GeneticAlgorithm.cs" />
+    <Compile Include="Individual\IIndividual.cs" />
+    <Compile Include="Individual\Individual.cs" />
+    <Compile Include="Operators\Mutation\IMutationOperator.cs" />
+    <Compile Include="Operators\Mutation\SingleMutation.cs" />
+    <Compile Include="Population\IPopulation.cs" />
+    <Compile Include="Population\Population.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Operators\Selection\ISelectionOperator.cs" />
+    <Compile Include="Operators\Selection\RouletteWheelSelection.cs" />
+    <Compile Include="Operators\Selection\TournamentSelection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StandardTypes\StandardTypes.csproj">
+      <Project>{CFF5C8B3-B878-4C8B-957A-647C1FD9CA08}</Project>
+      <Name>StandardTypes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

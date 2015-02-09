@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Файлы исходного кода">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Заголовочные файлы">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Train">
+      <UniqueIdentifier>{9c9783ff-06d4-413c-8774-2a835c2fb4fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Regularization">
+      <UniqueIdentifier>{84e7aa1d-27eb-496c-8b9b-58304dc3937c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\Regularization">
+      <UniqueIdentifier>{a70ddd53-a02b-4251-9df8-0944c688ca4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\ActivationFunctions">
+      <UniqueIdentifier>{27a7fda1-5ec5-4e12-b0e9-af0cf6bf2b85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\ActivationFunctions">
+      <UniqueIdentifier>{f44acb22-6ad9-4889-b4b7-a8d206ad0d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes">
+      <UniqueIdentifier>{029bfb32-aacf-4147-90ec-4f1e7c22563c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes">
+      <UniqueIdentifier>{26001301-2d23-4e47-b10b-2218147120f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\BlockType">
+      <UniqueIdentifier>{172600ca-d96e-4012-8176-71654f874091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\BlockType">
+      <UniqueIdentifier>{ff2addae-beba-410d-a901-e06d19cd43ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\BlockType\Blocks">
+      <UniqueIdentifier>{9a345972-99a4-4530-ae33-a0c539ef8f71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\BlockType\Blocks">
+      <UniqueIdentifier>{4f584cbd-d94c-4a3a-94e2-88a77f1e49ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets">
+      <UniqueIdentifier>{a4c9a588-6b78-4761-904a-3579ec6fb2c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets">
+      <UniqueIdentifier>{e1f6cf9f-c726-4490-b77f-796e1c2f5c96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron">
+      <UniqueIdentifier>{59416e63-7ddc-4baf-bef5-8263d17ca2d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron">
+      <UniqueIdentifier>{57075c75-0f6b-4305-b5f7-c423fcebd32a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\Factories">
+      <UniqueIdentifier>{0dff8969-b9d7-45da-bece-1a4724ef0b0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\Factories">
+      <UniqueIdentifier>{837654c5-4c47-4e3d-a84a-6dba34229fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\TrainMethods">
+      <UniqueIdentifier>{9350e28e-c8f1-4f4c-b803-95b5834c7fbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\TrainMethods">
+      <UniqueIdentifier>{83594193-4142-4822-96ff-357755bbf110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine">
+      <UniqueIdentifier>{347ce66e-e69b-427c-a0b8-4b288a74c028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\Factories">
+      <UniqueIdentifier>{3b2e1c56-4a83-47f6-a348-e1a6eba62f90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods">
+      <UniqueIdentifier>{75f20117-11fa-4b4a-8a3c-474dc90301b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine">
+      <UniqueIdentifier>{84b57a90-26ec-4409-a526-8b565409d2b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\Factories">
+      <UniqueIdentifier>{ce817271-b7d3-42d7-9d21-6890a5051b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods">
+      <UniqueIdentifier>{c3ded9d7-f93f-4db0-aba4-4a237027fbae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types">
+      <UniqueIdentifier>{d2197336-5e59-4700-b790-628b98187871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types">
+      <UniqueIdentifier>{f6029b48-6148-4d2a-9f49-c8ce5d3f275d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\Train\LearnFactorStrategy">
+      <UniqueIdentifier>{349737e3-07ca-4de5-97ca-d535f6a3c7ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\Train">
+      <UniqueIdentifier>{320902ad-d83c-40e2-865a-ab06c14b249f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\Train\LearnFactorStrategy">
+      <UniqueIdentifier>{4dbaf8f6-1c72-495d-9e58-e98e80211def}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NeuralNet.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="ExportDll.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNetFactory.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainMethod.h">
+      <Filter>Заголовочные файлы\Train</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainProperties.h">
+      <Filter>Заголовочные файлы\Train</Filter>
+    </ClInclude>
+    <ClInclude Include="Regularization.h">
+      <Filter>Заголовочные файлы\Regularization</Filter>
+    </ClInclude>
+    <ClInclude Include="NoRegularization.h">
+      <Filter>Заголовочные файлы\Regularization</Filter>
+    </ClInclude>
+    <ClInclude Include="L1Regularization.h">
+      <Filter>Заголовочные файлы\Regularization</Filter>
+    </ClInclude>
+    <ClInclude Include="L2Regularization.h">
+      <Filter>Заголовочные файлы\Regularization</Filter>
+    </ClInclude>
+    <ClInclude Include="ActivationFunction.h">
+      <Filter>Заголовочные файлы\ActivationFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="HyperbolicTangensFunction.h">
+      <Filter>Заголовочные файлы\ActivationFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="SigmoidFunction.h">
+      <Filter>Заголовочные файлы\ActivationFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftmaxFunction.h">
+      <Filter>Заголовочные файлы\ActivationFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseNeuralBlock.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\BlockType\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleNeuronBlock.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\BlockType\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="MultyLayerPerceptron.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron</Filter>
+    </ClInclude>
+    <ClInclude Include="MultyLayerPerceptronFactory.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftmaxNeuronBlock.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\BlockType\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="BackPropagationAlgorithm.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\TrainMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="RestrictedBoltzmannMachineFactory.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="ContrastiveDivergence.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="RestrictedBoltzmannMachine.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryBinaryRbm.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types</Filter>
+    </ClInclude>
+    <ClInclude Include="GaussianBinaryRbm.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types</Filter>
+    </ClInclude>
+    <ClInclude Include="EliminationRegularization.h">
+      <Filter>Заголовочные файлы\Regularization</Filter>
+    </ClInclude>
+    <ClInclude Include="GrainSizeForParallel.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="LearnFactorStrategy.h">
+      <Filter>Заголовочные файлы\Train\LearnFactorStrategy</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantFactor.h">
+      <Filter>Заголовочные файлы\Train\LearnFactorStrategy</Filter>
+    </ClInclude>
+    <ClInclude Include="FastPersistentContrastiveDivergence.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="ReverseFactor.h">
+      <Filter>Заголовочные файлы\Train\LearnFactorStrategy</Filter>
+    </ClInclude>
+    <ClInclude Include="SqrtReverseFactor.h">
+      <Filter>Заголовочные файлы\Train\LearnFactorStrategy</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Regularization.cpp">
+      <Filter>Файлы исходного кода\Regularization</Filter>
+    </ClCompile>
+    <ClCompile Include="NoRegularization.cpp">
+      <Filter>Файлы исходного кода\Regularization</Filter>
+    </ClCompile>
+    <ClCompile Include="L1Regularization.cpp">
+      <Filter>Файлы исходного кода\Regularization</Filter>
+    </ClCompile>
+    <ClCompile Include="L2Regularization.cpp">
+      <Filter>Файлы исходного кода\Regularization</Filter>
+    </ClCompile>
+    <ClCompile Include="HyperbolicTangensFunction.cpp">
+      <Filter>Файлы исходного кода\ActivationFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="SigmoidFunction.cpp">
+      <Filter>Файлы исходного кода\ActivationFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftmaxFunction.cpp">
+      <Filter>Файлы исходного кода\ActivationFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseNeuralBlock.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\BlockType\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleNeuronBlock.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\BlockType\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="MultyLayerPerceptron.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron</Filter>
+    </ClCompile>
+    <ClCompile Include="MultyLayerPerceptronFactory.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftmaxNeuronBlock.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\BlockType\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="BackPropagationAlgorithm.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\TrainMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="RestrictedBoltzmannMachineFactory.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="ContrastiveDivergence.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="RestrictedBoltzmannMachine.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryBinaryRbm.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types</Filter>
+    </ClCompile>
+    <ClCompile Include="GaussianBinaryRbm.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\RBM types</Filter>
+    </ClCompile>
+    <ClCompile Include="EliminationRegularization.cpp">
+      <Filter>Файлы исходного кода\Regularization</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantFactor.cpp">
+      <Filter>Файлы исходного кода\Train\LearnFactorStrategy</Filter>
+    </ClCompile>
+    <ClCompile Include="ReverseFactor.cpp">
+      <Filter>Файлы исходного кода\Train\LearnFactorStrategy</Filter>
+    </ClCompile>
+    <ClCompile Include="SqrtReverseFactor.cpp">
+      <Filter>Файлы исходного кода\Train\LearnFactorStrategy</Filter>
+    </ClCompile>
+    <ClCompile Include="FastPersistentContrastiveDivergence.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
