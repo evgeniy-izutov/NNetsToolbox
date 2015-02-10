@@ -73,7 +73,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;NEURALNETNATIVE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\StandartTypesNative;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <VectorizerDiagnosticLevel>LoopsSuccessVectorized1</VectorizerDiagnosticLevel>
       <UseProcessorExtensions>AVX</UseProcessorExtensions>
     </ClCompile>
     <Link>
