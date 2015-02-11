@@ -55,6 +55,18 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				target[i] = uniformGenerator.NextDouble() < hiddenStates[i] ? 1.0f : 0.0f;
 			}
 		}
+
+		public void CopyVisibleLayerTo(float[] target) {
+			for (var i = 0; i < visibleStates.Length; i++) {
+				target[i] = visibleStates[i];
+			}
+		}
+
+		public void CopyHiddenLayerTo(float[] target) {
+			for (var i = 0; i < hiddenStates.Length; i++) {
+				target[i] = hiddenStates[i];
+			}
+		}
 		
 		public void Predict(float[] input, float[] output) {
 			HiddenLayerCalculateActivity(input);

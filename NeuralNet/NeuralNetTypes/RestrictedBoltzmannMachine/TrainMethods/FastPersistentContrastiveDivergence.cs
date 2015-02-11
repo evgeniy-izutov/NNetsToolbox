@@ -80,7 +80,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 
 		protected override void RestoreVisibleStates(int packageId) {
 			neuralNet.VisibleLayerCalculateActivity(_fastWeights, _fastWeightsForVisibleBias);
-			neuralNet.VisibleLayerSampling(persistentVisibleStates[packageId]);
+			neuralNet.CopyVisibleLayerTo(persistentVisibleStates[packageId]);
 		}
 
 		protected override void ModifyWeightsOfNeuronNet() {

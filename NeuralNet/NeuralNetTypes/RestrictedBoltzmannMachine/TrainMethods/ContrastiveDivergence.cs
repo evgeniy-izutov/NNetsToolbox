@@ -67,10 +67,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 
 		protected override void MakePositivePhase(float[] input) {
 			neuralNet.HiddenLayerCalculateActivity(input);
-			neuralNet.HiddenLayerSampling();
 		}
 
 		protected override void MakeNegativePhase(int packageId) {
+			neuralNet.HiddenLayerSampling();
 			neuralNet.VisibleLayerCalculateActivity();
 			for (var k = 1; k < _methodStepsCount; k++) {
 				neuralNet.HiddenLayerCalculateActivity();
