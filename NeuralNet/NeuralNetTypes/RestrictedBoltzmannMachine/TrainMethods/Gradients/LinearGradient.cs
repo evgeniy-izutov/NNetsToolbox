@@ -1,54 +1,48 @@
 ﻿namespace NeuralNet.RestrictedBoltzmannMachine {
-	public sealed class LinearGradient : IGradientFunction {
-		private readonly int _visibleStatesCount;
-		private readonly int _hiddenStatesCount;
+	public sealed class LinearGradient : GradientFunction {
+		public override void PrepareToNextPackage(int nextPackageSize) {}
 
-		public LinearGradient(int visibleStatesCount, int hiddenStatesCount) {
-			_visibleStatesCount = visibleStatesCount;
-			_hiddenStatesCount = hiddenStatesCount;
-		}
-
-		public void StorePositivePhaseData(RbmGradients gradients, float[] visibleStates, float[] hiddenStates) {
-			for (var j = 0; j < _hiddenStatesCount; j++) {
-				var startIndex = j*_visibleStatesCount;
+		public override void StorePositivePhaseData(float[] visibleStates, float[] hiddenStates) {
+			for (var j = 0; j < HiddenStatesCount; j++) {
+				var startIndex = j*VisibleStatesCount;
 				var hiddenSate = hiddenStates[j];
-				for (var i = 0; i < _visibleStatesCount; i++) {
-					gradients.PackageDerivativeForWeights[startIndex + i] += visibleStates[i]*hiddenSate;
+				for (var i = 0; i < VisibleStatesCount; i++) {
+					Gradients.PackageDerivativeForWeights[startIndex + i] += visibleStates[i]*hiddenSate;
 				}
-				gradients.PackageDerivativeForHiddenBias[j] += hiddenSate;
+				Gradients.PackageDerivativeForHiddenBias[j] += hiddenSate;
 			}
 
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				gradients.PackageDerivativeForVisibleBias[i] += visibleStates[i];
+			for (var i = 0; i < VisibleStatesCount; i++) {
+				Gradients.PackageDerivativeForVisibleBias[i] += visibleStates[i];
 			}
 		}
 
-		public void StoreNegativePhaseData(RbmGradients gradients, float[] visibleStates, float[] hiddenStates) {
-			for (var j = 0; j < _hiddenStatesCount; j++) {
-				var startIndex = j*_visibleStatesCount;
+		public override void StoreNegativePhaseData(float[] visibleStates, float[] hiddenStates) {
+			for (var j = 0; j < HiddenStatesCount; j++) {
+				var startIndex = j*VisibleStatesCount;
 				var hiddenState = hiddenStates[j];
-				for (var i = 0; i < _visibleStatesCount; i++) {
-					gradients.PackageDerivativeForWeights[startIndex + i] -= visibleStates[i]*hiddenState;
+				for (var i = 0; i < VisibleStatesCount; i++) {
+					Gradients.PackageDerivativeForWeights[startIndex + i] -= visibleStates[i]*hiddenState;
 				}
-				gradients.PackageDerivativeForHiddenBias[j] -= hiddenState;
+				Gradients.PackageDerivativeForHiddenBias[j] -= hiddenState;
 			}
 
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				gradients.PackageDerivativeForVisibleBias[i] -= visibleStates[i];
+			for (var i = 0; i < VisibleStatesCount; i++) {
+				Gradients.PackageDerivativeForVisibleBias[i] -= visibleStates[i];
 			}
 		}
 
-		public void MakeGradient(RbmGradients gradients, float packageFactor) {
-			for (var j = 0; j < _hiddenStatesCount; j++) {
-				var startIndex = j*_visibleStatesCount;
-				for (var i = 0; i < _visibleStatesCount; i++) {
-					gradients.PackageDerivativeForWeights[startIndex + i] *= packageFactor;
+		public override void MakeGradient(float packageFactor) {
+			for (var j = 0; j < HiddenStatesCount; j++) {
+				var startIndex = j*VisibleStatesCount;
+				for (var i = 0; i < VisibleStatesCount; i++) {
+					Gradients.PackageDerivativeForWeights[startIndex + i] *= packageFactor;
 				}
-				gradients.PackageDerivativeForHiddenBias[j] *= packageFactor;
+				Gradients.PackageDerivativeForHiddenBias[j] *= packageFactor;
 			}
 
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				gradients.PackageDerivativeForVisibleBias[i] *= packageFactor;
+			for (var i = 0; i < VisibleStatesCount; i++) {
+				Gradients.PackageDerivativeForVisibleBias[i] *= packageFactor;
 			}
 		}
 	}

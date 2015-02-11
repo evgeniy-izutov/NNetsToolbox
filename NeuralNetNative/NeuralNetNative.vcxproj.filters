@@ -99,6 +99,12 @@
     <Filter Include="Файлы исходного кода\Train\LearnFactorStrategy">
       <UniqueIdentifier>{4dbaf8f6-1c72-495d-9e58-e98e80211def}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients">
+      <UniqueIdentifier>{16c965ec-52fd-4ab6-ab00-d60fe4c33c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients">
+      <UniqueIdentifier>{cdc0bfe8-850d-4c9c-b6f8-55322fed8ee4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NeuralNet.h">
@@ -194,6 +200,15 @@
     <ClInclude Include="SqrtReverseFactor.h">
       <Filter>Заголовочные файлы\Train\LearnFactorStrategy</Filter>
     </ClInclude>
+    <ClInclude Include="RbmGradients.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
+    </ClInclude>
+    <ClInclude Include="GradientFunction.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearGradient.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Regularization.cpp">
@@ -264,6 +279,15 @@
     </ClCompile>
     <ClCompile Include="FastPersistentContrastiveDivergence.cpp">
       <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="RbmGradients.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
+    </ClCompile>
+    <ClCompile Include="GradientFunction.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearGradient.cpp">
+      <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

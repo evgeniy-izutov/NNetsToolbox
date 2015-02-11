@@ -67,7 +67,9 @@
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\RestrictedBoltzmannMachine.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\ContrastiveDivergence.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\FastPersistentContrastiveDivergence.cs" />
+    <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\CenteredGradient.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\EnhancedGradient.cs" />
+    <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\GradientFunction.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\IGradientFunction.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\LinearGradient.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\RbmGradients.cs" />

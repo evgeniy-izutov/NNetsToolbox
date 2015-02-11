@@ -17,6 +17,14 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			Array.Clear(_packageDerivativeForHiddenBias, 0 , hiddenStatesCount);
 		}
 
+		public int VisibleStatesCount {
+			get { return _packageDerivativeForVisibleBias.Length; }
+		}
+
+		public int HiddenStatesCount {
+			get { return _packageDerivativeForHiddenBias.Length; }
+		}
+
 		public float[] PackageDerivativeForWeights {
 			get { return _packageDerivativeForWeights; }
 		}

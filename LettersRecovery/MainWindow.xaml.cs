@@ -146,10 +146,9 @@ namespace LettersRecovery {
             return inputVector;
         }
 
-        private void CreateNeuronNet() {
-	        //var visibleUnitsProbability = CalculateVisibleUnitsProbability();
+        private void CreateNeuronNet(float[] visibleUnitsProbability) {
 			var neuronFactory = new RestrictedBoltzmannMachineFactory(RbmType.BinaryBinary, VisibleStatesCount, HiddenStatesCount, 
-				DistributionType.Uniform);
+				DistributionType.Normal);
             _neuralNet = (RestrictedBoltzmannMachine) neuronFactory.CreateNeuralNet();
         }
 
@@ -166,13 +165,15 @@ namespace LettersRecovery {
 	    }
 
 		private void CompleteLearningOfNeuronNet() {
-			CreateNeuronNet();
-			TrainNeuralNet();
+			var visibleUnitsProbability = CalculateVisibleUnitsProbability();
+			
+			CreateNeuronNet(visibleUnitsProbability);
+			TrainNeuralNet(visibleUnitsProbability);
 			TestNeuralNet();
 			CalculateWeightsStat();
 		}
         
-        private void TrainNeuralNet () {
+        private void TrainNeuralNet(float[] visibleUnitsProbability) {
         	_trainProperties = new TrainProperties {
         		Epsilon = 0.001f,
         		MaxIterationCount = 25,
@@ -195,7 +196,7 @@ namespace LettersRecovery {
 				//Regularization = new L2Regularization(0.01f)
         	};
 
-	        var trainMethod = new FastPersistentContrastiveDivergence(_trainData, new EnhancedGradient(VisibleStatesCount, HiddenStatesCount), 19f/20f);
+	        var trainMethod = new FastPersistentContrastiveDivergence(_trainData, _testData, new CenteredGradient(0.5f, visibleUnitsProbability), 19f/20f);
 			//var trainMethod = new NativeWrapper.FastPersistentContrastiveDivergenceNative(_trainData, _testData, 19f/20f);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;

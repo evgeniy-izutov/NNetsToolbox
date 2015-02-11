@@ -38,6 +38,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			hiddenStatesCount = this.neuralNet.HiddenStates.Length;
 
 			gradients = new RbmGradients(visibleStatesCount, hiddenStatesCount);
+			_gradientFunction.Initialize(gradients);
 
 			_neuronNetOutput = new float[visibleStatesCount];
 
@@ -116,16 +117,17 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		}
 
 		private void TrainPackage(int packageId) {
+			_gradientFunction.PrepareToNextPackage(properties.PackageSize);
 			for (var i = 0; i < properties.PackageSize; i++) {
 				var input = _trainDataIterator.Next().Input;
 
 				MakePositivePhase(input);
-				_gradientFunction.StorePositivePhaseData(gradients, input, neuralNet.HiddenStates);
+				_gradientFunction.StorePositivePhaseData(input, neuralNet.HiddenStates);
 				MakeNegativePhase(packageId);
-				_gradientFunction.StoreNegativePhaseData(gradients, GetVisibleStatesOnNegativePhase(packageId), GetHiddenStatesOnNegativePhase());
+				_gradientFunction.StoreNegativePhaseData(GetVisibleStatesOnNegativePhase(packageId), GetHiddenStatesOnNegativePhase());
 				RestoreVisibleStates(packageId);
 			}
-			_gradientFunction.MakeGradient(gradients, packageFactor);
+			_gradientFunction.MakeGradient(packageFactor);
 			ModifyWeightsOfNeuronNet();
 		}
 
