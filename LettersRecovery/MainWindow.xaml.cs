@@ -148,7 +148,7 @@ namespace LettersRecovery {
 
         private void CreateNeuronNet(float[] visibleUnitsProbability) {
 			var neuronFactory = new RestrictedBoltzmannMachineFactory(RbmType.BinaryBinary, VisibleStatesCount, HiddenStatesCount, 
-				DistributionType.Normal);
+				DistributionType.Uniform, visibleUnitsProbability);
             _neuralNet = (RestrictedBoltzmannMachine) neuronFactory.CreateNeuralNet();
         }
 
@@ -174,30 +174,33 @@ namespace LettersRecovery {
 		}
         
         private void TrainNeuralNet(float[] visibleUnitsProbability) {
-        	_trainProperties = new TrainProperties {
+            const int iterationCount = 15;
+            _trainProperties = new TrainProperties {
         		Epsilon = 0.001f,
-        		MaxIterationCount = 25,
+        		MaxIterationCount = iterationCount,
         		Metrics = new HammingDistance(),
         		PackageSize = 20,
 				CvLimit = 10.0f,
 				BaseLearnSpeed = 0.001f,
 				Momentum = 0.94f,
-				LearnFactorStrategy = new ReverseFactor(),
+				//LearnFactorStrategy = new LinearFactor(1f, 1f/10f, iterationCount),
+                LearnFactorStrategy = new ConstantFactor(),
 				
-				AddedLearnFactorStrategy = new SqrtReverseFactor(),
+				AddedLearnFactorStrategy = new LinearFactor(0.8f, 2f, iterationCount),
 
-				SpeedBonus = 0.05f,
-				SpeedPenalty = 0.95f,
+				SpeedBonus = 0.01f,
+				SpeedPenalty = 0.99f,
 				SpeedUpBorder = float.MaxValue,
 				SpeedLowBorder = float.MinValue,
 				AverageLearnFactor = 0.6f,
 
+                //Regularization = new NoRegularization()
         		Regularization = new EliminationRegularization(0.001f, 1.3f)
 				//Regularization = new L2Regularization(0.01f)
         	};
 
-	        var trainMethod = new FastPersistentContrastiveDivergence(_trainData, _testData, new CenteredGradient(0.5f, visibleUnitsProbability), 19f/20f);
-			//var trainMethod = new NativeWrapper.FastPersistentContrastiveDivergenceNative(_trainData, _testData, 19f/20f);
+	        //var trainMethod = new FastPersistentContrastiveDivergence(_trainData, _testData, new LinearGradient(), 19f/20f);
+			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

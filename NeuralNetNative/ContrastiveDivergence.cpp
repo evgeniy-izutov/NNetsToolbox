@@ -288,7 +288,8 @@ namespace NeuralNetNative {
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
 					float lastDerivativeAverageForHiddenBias = _derivativeAveragesForHiddenBias[j];
-					float partialDerivativeForHiddenBias = _packageFactor*_packageDerivativeForHiddenBias[j];
+					float partialDerivativeForHiddenBias = _packageFactor*_packageDerivativeForHiddenBias[j] - 
+							regularizationFactorPerPackage*_properties->Regularization->GetDerivative(hiddenStatesBias[j]);
 					_packageDerivativeForHiddenBias[j] = 0.0f;
 					_learnFactorsForHiddenBias[j] = (lastDerivativeAverageForHiddenBias*partialDerivativeForHiddenBias > 0.0f) ?
 						fminf(_learnFactorsForHiddenBias[j] + _properties->SpeedBonus, _properties->SpeedUpBorder):

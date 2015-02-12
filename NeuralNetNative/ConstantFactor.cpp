@@ -6,7 +6,7 @@ namespace NeuralNetNative {
 		_constantValue = constantValue;
 	}
 	
-	float ConstantFactor::GetFactor(int iterNumber) {
+	float ConstantFactor::GetFactor(int iterNumber) const {
 		return _constantValue;
 	}
 }

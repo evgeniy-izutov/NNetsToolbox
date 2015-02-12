@@ -83,10 +83,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				for (var i = 0; i < visibleStatesBias.Length; i++) {
 					var probability = _inputProbabilities[i];
 					if (Math.Abs(probability) <= float.Epsilon) {
-						visibleStatesBias[i] = minBorderValue;
+						visibleStatesBias[i] = minBorderValue - BiasStartValueBorder;
 					}
 					else if (Math.Abs(1.0f - probability) <= float.Epsilon) {
-						visibleStatesBias[i] = maxBorderValue;
+						visibleStatesBias[i] = maxBorderValue + BiasStartValueBorder;
 					}
 				}
 

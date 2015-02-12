@@ -84,6 +84,7 @@
     <Compile Include="Train\LeanFactorStrategy\ILearnFactorStrategy.cs" />
     <Compile Include="Train\ITrainMethod.cs" />
     <Compile Include="Train\ITrainProperties.cs" />
+    <Compile Include="Train\LeanFactorStrategy\LinearFactor.cs" />
     <Compile Include="Train\LeanFactorStrategy\ReverseFactor.cs" />
     <Compile Include="Train\LeanFactorStrategy\SqrtReverseFactor.cs" />
     <Compile Include="Train\TrainMethod.cs" />

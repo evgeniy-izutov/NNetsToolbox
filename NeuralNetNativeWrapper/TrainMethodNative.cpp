@@ -13,6 +13,7 @@
 #include "ConstantFactor.h"
 #include "ReverseFactor.h"
 #include "SqrtReverseFactor.h"
+#include "LinearFactor.h"
 
 namespace NeuralNetNativeWrapper {
 	void TrainMethodNative::InitilazeMethod(INeuralNet^ neuralNet, ITrainProperties^ trainProperties) {
@@ -85,6 +86,10 @@ namespace NeuralNetNativeWrapper {
 		else if (dynamic_cast<SqrtReverseFactor^>(learnFactorStrategy) != nullptr) {
 			nativeLearnFactorStrategy = new NeuralNetNative::SqrtReverseFactor();
 		}
+		else if (dynamic_cast<LinearFactor^>(learnFactorStrategy) != nullptr) {
+			LinearFactor^ factor = dynamic_cast<LinearFactor^>(learnFactorStrategy);
+			nativeLearnFactorStrategy = new NeuralNetNative::LinearFactor(factor->A, factor->B);
+		}
 		_nativeTrainProperties->FactorStrategy = nativeLearnFactorStrategy;
 
 		NeuralNetNative::LearnFactorStrategy *nativeAddedLearnFactorStrategy;
@@ -97,6 +102,10 @@ namespace NeuralNetNativeWrapper {
 		}
 		else if (dynamic_cast<SqrtReverseFactor^>(addedLearnFactorStrategy) != nullptr) {
 			nativeAddedLearnFactorStrategy = new NeuralNetNative::SqrtReverseFactor();
+		}
+		else if (dynamic_cast<LinearFactor^>(addedLearnFactorStrategy) != nullptr) {
+			LinearFactor^ factor = dynamic_cast<LinearFactor^>(addedLearnFactorStrategy);
+			nativeAddedLearnFactorStrategy = new NeuralNetNative::LinearFactor(factor->A, factor->B);
 		}
 		_nativeTrainProperties->AddedFactorStrategy = nativeAddedLearnFactorStrategy;
 	}

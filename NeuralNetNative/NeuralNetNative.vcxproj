@@ -101,6 +101,7 @@
     <ClInclude Include="L1Regularization.h" />
     <ClInclude Include="L2Regularization.h" />
     <ClInclude Include="LearnFactorStrategy.h" />
+    <ClInclude Include="LinearFactor.h" />
     <ClInclude Include="LinearGradient.h" />
     <ClInclude Include="MultyLayerPerceptron.h" />
     <ClInclude Include="MultyLayerPerceptronFactory.h" />
@@ -133,6 +134,7 @@
     <ClCompile Include="HyperbolicTangensFunction.cpp" />
     <ClCompile Include="L1Regularization.cpp" />
     <ClCompile Include="L2Regularization.cpp" />
+    <ClCompile Include="LinearFactor.cpp" />
     <ClCompile Include="LinearGradient.cpp" />
     <ClCompile Include="MultyLayerPerceptron.cpp" />
     <ClCompile Include="MultyLayerPerceptronFactory.cpp" />

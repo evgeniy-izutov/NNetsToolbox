@@ -9,6 +9,6 @@ namespace NeuralNetNative {
 		float _constantValue;
 	public:
 		ConstantFactor(float constantValue = 1.0f);
-		virtual float GetFactor(int iterNumber);
+		virtual float GetFactor(int iterNumber) const;
 	};
 }
