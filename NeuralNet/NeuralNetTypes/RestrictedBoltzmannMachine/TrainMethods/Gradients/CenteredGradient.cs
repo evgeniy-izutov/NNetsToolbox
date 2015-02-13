@@ -68,8 +68,9 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			for (var j = 0; j < HiddenStatesCount; j++) {
 				var startIndex = j*VisibleStatesCount;
 				var hiddenState = hiddenStates[j];
+			    var hiddenOffset = _hiddenOffsetVector[j];
 				for (var i = 0; i < VisibleStatesCount; i++) {
-					_dataVisibleHidden[startIndex + i] += (visibleStates[i] - _visibleOffsetVector[i])*(hiddenState - _hiddenOffsetVector[j]);
+					_dataVisibleHidden[startIndex + i] += (visibleStates[i] - _visibleOffsetVector[i])*(hiddenState - hiddenOffset);
 				}
 				_dataHidden[j] += hiddenState;
 				_hiddenOffsetNewVector[j] += _packageFactor*hiddenStates[j];

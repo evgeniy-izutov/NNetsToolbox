@@ -8,10 +8,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		private readonly IList<TrainSingle> _testData;
 		private readonly IGradientFunction _gradientFunction;
 		private float[] _neuronNetOutput;
+        private float packageFactor;
 		protected RbmGradients gradients;
 		protected ITrainProperties properties;
 		protected RestrictedBoltzmannMachine neuralNet;
-		protected float packageFactor;
 		protected int visibleStatesCount;
 		protected int hiddenStatesCount;
 		protected int epochNumber;

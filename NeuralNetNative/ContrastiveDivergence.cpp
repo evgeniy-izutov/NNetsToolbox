@@ -252,10 +252,10 @@ namespace NeuralNetNative {
 						_derivativeAverages[weightIndex] = _properties->AverageLearnFactor*partialDerivative + 
 							(1.0f - _properties->AverageLearnFactor)*lastDerivativeAverage;
 
-						float oldDeltaWeight = _properties->Momentum*_oldDeltaWeights[weightIndex];
-						float newDeltaWeight = curLearnSpeed*_learnFactors[weightIndex]*partialDerivative + oldDeltaWeight;
+						float newDeltaWeight = curLearnSpeed*_learnFactors[weightIndex]*partialDerivative + 
+						                       _properties->Momentum*_oldDeltaWeights[weightIndex];
 						_oldDeltaWeights[weightIndex] = newDeltaWeight;
-						weights[weightIndex] += newDeltaWeight + oldDeltaWeight;
+						weights[weightIndex] += (1.0f + _properties->Momentum)*newDeltaWeight;
 					}
 				}
 			});
@@ -274,11 +274,10 @@ namespace NeuralNetNative {
 					_derivativeAveragesForVisibleBias[i] = _properties->AverageLearnFactor*partialDerivativeForVisibleBias + 
 						(1.0f - _properties->AverageLearnFactor)*lastDerivativeAverageForVisibleBias;
 
-					float oldDeltaForVisibleBias = _properties->Momentum*_oldDeltaWeightsForVisibleBias[i];
 					float newDeltaForVisibleBias = curLearnSpeed*_learnFactorsForVisibleBias[i]*partialDerivativeForVisibleBias + 
-						oldDeltaForVisibleBias;
+						                           _properties->Momentum*_oldDeltaWeightsForVisibleBias[i];
 					_oldDeltaWeightsForVisibleBias[i] = newDeltaForVisibleBias;
-					visibleStatesBias[i] += newDeltaForVisibleBias + oldDeltaForVisibleBias;
+					visibleStatesBias[i] += (1.0f + _properties->Momentum)*newDeltaForVisibleBias;
 				}
 			});		
 
@@ -297,11 +296,10 @@ namespace NeuralNetNative {
 					_derivativeAveragesForHiddenBias[j] = _properties->AverageLearnFactor*partialDerivativeForHiddenBias + 
 						(1.0f - _properties->AverageLearnFactor)*lastDerivativeAverageForHiddenBias;
 					
-					float oldDeltaForHiddenBias = _properties->Momentum*_oldDeltaWeightsForHiddenBias[j];
 					float newDeltaForHiddenBias = curLearnSpeed*_learnFactorsForHiddenBias[j]*partialDerivativeForHiddenBias + 
-						oldDeltaForHiddenBias;
+						                          _properties->Momentum*_oldDeltaWeightsForHiddenBias[j];
 					_oldDeltaWeightsForHiddenBias[j] = newDeltaForHiddenBias;
-					hiddenStatesBias[j] += newDeltaForHiddenBias + oldDeltaForHiddenBias;
+					hiddenStatesBias[j] += (1.0f + _properties->Momentum)*newDeltaForHiddenBias;
 				}
 			});
 		}

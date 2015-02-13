@@ -204,9 +204,6 @@ namespace NeuralNetNative {
 
 			_neuralNet->VisibleLayerCalculateActivity(_fastWeights, _fastWeightsForVisibleBias);
 			_neuralNet->VisibleLayerCopyTo(persistentVisibleStates);
-
-			//not to sample visible layer?
-			//_neuralNet->VisibleLayerSampling(persistentVisibleStates);
 		}
 
 		void FastPersistentContrastiveDivergence::ModifyWeightsOfNeuronNet() {
@@ -225,11 +222,11 @@ namespace NeuralNetNative {
 						float partialDerivative = _packageFactor*_packageDerivative[weightIndex];
 						_packageDerivative[weightIndex] = 0.0f;
 						
-						float oldDeltaRegularWeight = _properties->Momentum*_oldDeltaRegularWeights[weightIndex];
-						float newDeltaRegularWeight = oldDeltaRegularWeight + curRegularLearnSpeed*(partialDerivative - 
+						float newDeltaRegularWeight = _properties->Momentum*_oldDeltaRegularWeights[weightIndex] +
+						    curRegularLearnSpeed*(partialDerivative - 
 							regularizationFactorPerPackage*_properties->Regularization->GetDerivative(regularWeights[weightIndex]));
 						_oldDeltaRegularWeights[weightIndex] = newDeltaRegularWeight;
-						regularWeights[weightIndex] += newDeltaRegularWeight + oldDeltaRegularWeight;
+						regularWeights[weightIndex] += (1.0f + _properties->Momentum)*newDeltaRegularWeight;
 
 						_fastWeights[weightIndex] = _fastWeightsDecreaseFactor*_fastWeights[weightIndex] + curFastLearnSpeed*partialDerivative;
 					}
@@ -244,10 +241,10 @@ namespace NeuralNetNative {
 					float partialDerivativeForVisibleBias = _packageFactor*_packageDerivativeForVisibleBias[i];
 					_packageDerivativeForVisibleBias[i] = 0.0f;
 					
-					float oldDeltaForRegularVisibleBias = _properties->Momentum*_oldDeltaRegularWeightsForVisibleBias[i];
-					float newDeltaForRegularVisibleBias = curRegularLearnSpeed*partialDerivativeForVisibleBias + oldDeltaForRegularVisibleBias;
+					float newDeltaForRegularVisibleBias = curRegularLearnSpeed*partialDerivativeForVisibleBias +
+					                                      _properties->Momentum*_oldDeltaRegularWeightsForVisibleBias[i];
 					_oldDeltaRegularWeightsForVisibleBias[i] = newDeltaForRegularVisibleBias;
-					regularVisibleStatesBias[i] += newDeltaForRegularVisibleBias + oldDeltaForRegularVisibleBias;
+					regularVisibleStatesBias[i] += (1.0f + _properties->Momentum)*newDeltaForRegularVisibleBias;
 
 					_fastWeightsForVisibleBias[i] = _fastWeightsDecreaseFactor*_fastWeightsForVisibleBias[i] + 
 						curFastLearnSpeed*partialDerivativeForVisibleBias;
@@ -262,10 +259,10 @@ namespace NeuralNetNative {
 					float partialDerivativeForHiddenBias = _packageFactor*_packageDerivativeForHiddenBias[j];
 					_packageDerivativeForHiddenBias[j] = 0.0f;
 										
-					float oldDeltaForHiddenBias = _properties->Momentum*_oldDeltaRegularWeightsForHiddenBias[j];
-					float newDeltaForHiddenBias = curRegularLearnSpeed*partialDerivativeForHiddenBias + oldDeltaForHiddenBias;
+					float newDeltaForHiddenBias = curRegularLearnSpeed*partialDerivativeForHiddenBias +
+					                              _properties->Momentum*_oldDeltaRegularWeightsForHiddenBias[j];
 					_oldDeltaRegularWeightsForHiddenBias[j] = newDeltaForHiddenBias;
-					regularHiddenStatesBias[j] += newDeltaForHiddenBias + oldDeltaForHiddenBias;
+					regularHiddenStatesBias[j] += (1.0f + _properties->Momentum)*newDeltaForHiddenBias;
 
 					_fastWeightsForHiddenBias[j] = _fastWeightsDecreaseFactor*_fastWeightsForHiddenBias[j] + 
 						curFastLearnSpeed*partialDerivativeForHiddenBias;

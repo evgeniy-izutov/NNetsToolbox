@@ -95,9 +95,8 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			var curLearnSpeed = properties.BaseLearnSpeed*properties.LearnFactorStrategy.GetFactor(epochNumber);
 			var weights = neuralNet.Weights;
 			for (var j = 0; j < hiddenStatesCount; j++) {
-				var startIndex = j*visibleStatesCount;
 				for (var i = 0; i < visibleStatesCount; i++) {
-					var weightIndex = startIndex + i;
+					var weightIndex = j*visibleStatesCount + i;
 					
 					var lastDerivativeAverage = _derivativeAverages[weightIndex];
 					var partialDerivative = gradients.PackageDerivativeForWeights[weightIndex] - 
@@ -109,10 +108,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 					_derivativeAverages[weightIndex] = properties.AverageLearnFactor*partialDerivative + 
 						(1.0f - properties.AverageLearnFactor)*lastDerivativeAverage;
 
-					var oldDeltaWeight = properties.Momentum*_oldDeltaWeights[weightIndex];
-					var newDeltaWeight = curLearnSpeed*_learnFactors[weightIndex]*partialDerivative + oldDeltaWeight;
+					var newDeltaWeight = curLearnSpeed*_learnFactors[weightIndex]*partialDerivative + 
+                                         properties.Momentum*_oldDeltaWeights[weightIndex];
 					_oldDeltaWeights[weightIndex] = newDeltaWeight;
-					weights[weightIndex] += newDeltaWeight + oldDeltaWeight;
+					weights[weightIndex] += (1f + properties.Momentum)*newDeltaWeight;
 				}
 			}
 
@@ -127,11 +126,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				_derivativeAveragesForVisibleBias[i] = properties.AverageLearnFactor*partialDerivativeForVisibleBias + 
 					(1.0f - properties.AverageLearnFactor)*lastDerivativeAverageForVisibleBias;
 
-				var oldDeltaForVisibleBias = properties.Momentum*_oldDeltaWeightsForVisibleBias[i];
 				var newDeltaForVisibleBias = curLearnSpeed*_learnFactorsForVisibleBias[i]*partialDerivativeForVisibleBias + 
-					oldDeltaForVisibleBias;
+					                         properties.Momentum*_oldDeltaWeightsForVisibleBias[i];
 				_oldDeltaWeightsForVisibleBias[i] = newDeltaForVisibleBias;
-				visibleStatesBias[i] += newDeltaForVisibleBias + oldDeltaForVisibleBias;
+				visibleStatesBias[i] += (1f + properties.Momentum)*newDeltaForVisibleBias;
 			}
 
 			var hiddenStatesBias = neuralNet.HiddenStatesBias;
@@ -145,11 +143,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				_derivativeAveragesForHiddenBias[j] = properties.AverageLearnFactor*partialDerivativeForHiddenBias + 
 					(1.0f - properties.AverageLearnFactor)*lastDerivativeAverageForHiddenBias;
 
-				var oldDeltaForHiddenBias = properties.Momentum*_oldDeltaWeightsForHiddenBias[j];
 				var newDeltaForHiddenBias = curLearnSpeed*_learnFactorsForHiddenBias[j]*partialDerivativeForHiddenBias + 
-					oldDeltaForHiddenBias;
+					                        properties.Momentum*_oldDeltaWeightsForHiddenBias[j];
 				_oldDeltaWeightsForHiddenBias[j] = newDeltaForHiddenBias;
-				hiddenStatesBias[j] += newDeltaForHiddenBias + oldDeltaForHiddenBias;
+				hiddenStatesBias[j] += (1f + properties.Momentum)*newDeltaForHiddenBias;
 			}
 		}
 	}

@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NeuralNet.RestrictedBoltzmannMachine {
 	public abstract class RestrictedBoltzmannMachine : INeuralNet {
-		protected readonly Random uniformGenerator;
+	    private readonly Random uniformGenerator;
 		protected float[] visibleStates;
 		protected float[] hiddenStates;
 		protected float[] weights;

@@ -97,11 +97,11 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 					var partialDerivative = gradients.PackageDerivativeForWeights[weightIndex];
 					gradients.PackageDerivativeForWeights[weightIndex] = 0.0f;
 					
-					var oldDeltaRegularWeight = properties.Momentum*_oldDeltaRegularWeights[weightIndex];
-					var newDeltaRegularWeight = oldDeltaRegularWeight + curRegularLearnSpeed*(partialDerivative - 
+					var newDeltaRegularWeight = curRegularLearnSpeed*(partialDerivative +
+                        properties.Momentum*_oldDeltaRegularWeights[weightIndex] - 
 						regularizationFactorPerPackage*properties.Regularization.GetDerivative(regularWeights[weightIndex]));
 					_oldDeltaRegularWeights[weightIndex] = newDeltaRegularWeight;
-					regularWeights[weightIndex] += newDeltaRegularWeight + oldDeltaRegularWeight;
+					regularWeights[weightIndex] += (1f + properties.Momentum)*newDeltaRegularWeight;
 
 					_fastWeights[weightIndex] = _fastWeightsDecreaseFactor*_fastWeights[weightIndex] + curFastLearnSpeed*partialDerivative;
 				}
@@ -112,11 +112,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				var partialDerivativeForVisibleBias = gradients.PackageDerivativeForVisibleBias[i];
 				gradients.PackageDerivativeForVisibleBias[i] = 0f;
 				
-				var oldDeltaForRegularVisibleBias = properties.Momentum*_oldDeltaRegularWeightsForVisibleBias[i];
-				var newDeltaForRegularVisibleBias = curRegularLearnSpeed*partialDerivativeForVisibleBias + 
-					oldDeltaForRegularVisibleBias;
+				var newDeltaForRegularVisibleBias = curRegularLearnSpeed*partialDerivativeForVisibleBias +
+					                                properties.Momentum*_oldDeltaRegularWeightsForVisibleBias[i];
 				_oldDeltaRegularWeightsForVisibleBias[i] = newDeltaForRegularVisibleBias;
-				regularVisibleStatesBias[i] += newDeltaForRegularVisibleBias + oldDeltaForRegularVisibleBias;
+				regularVisibleStatesBias[i] += (1f + properties.Momentum)*newDeltaForRegularVisibleBias;
 
 				_fastWeightsForVisibleBias[i] = _fastWeightsDecreaseFactor*_fastWeightsForVisibleBias[i] +
 					curFastLearnSpeed*partialDerivativeForVisibleBias;
@@ -127,11 +126,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				var partialDerivativeForHiddenBias = gradients.PackageDerivativeForHiddenBias[j];
 				gradients.PackageDerivativeForHiddenBias[j] = 0f;
 				
-				var oldDeltaForRegularHiddenBias = properties.Momentum*_oldDeltaRegularWeightsForHiddenBias[j];
-				var newDeltaForRegularHiddenBias = curRegularLearnSpeed*partialDerivativeForHiddenBias + 
-					oldDeltaForRegularHiddenBias;
+				var newDeltaForRegularHiddenBias = curRegularLearnSpeed*partialDerivativeForHiddenBias +
+					                               properties.Momentum*_oldDeltaRegularWeightsForHiddenBias[j];
 				_oldDeltaRegularWeightsForHiddenBias[j] = newDeltaForRegularHiddenBias;
-				regularHiddenStatesBias[j] += newDeltaForRegularHiddenBias + oldDeltaForRegularHiddenBias;
+				regularHiddenStatesBias[j] += (1f + properties.Momentum)*newDeltaForRegularHiddenBias;
 
 				_fastWeightsForHiddenBias[j] = _fastWeightsDecreaseFactor*_fastWeightsForHiddenBias[j] +
 					curFastLearnSpeed*partialDerivativeForHiddenBias;
