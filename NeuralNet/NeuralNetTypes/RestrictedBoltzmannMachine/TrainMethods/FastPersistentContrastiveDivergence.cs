@@ -103,7 +103,8 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 					_oldDeltaRegularWeights[weightIndex] = newDeltaRegularWeight;
 					regularWeights[weightIndex] += (1f + properties.Momentum)*newDeltaRegularWeight;
 
-					_fastWeights[weightIndex] = _fastWeightsDecreaseFactor*_fastWeights[weightIndex] + curFastLearnSpeed*partialDerivative;
+					_fastWeights[weightIndex] = _fastWeightsDecreaseFactor*_fastWeights[weightIndex] +
+                                                curFastLearnSpeed*partialDerivative;
 				}
 			}
 

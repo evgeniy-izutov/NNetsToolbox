@@ -15,6 +15,7 @@ namespace NeuralNetNativeWrapper {
 		internal:
 			NeuralNetNative::RestrictedBoltzmannMachine::FastPersistentContrastiveDivergence *_nativeAlgorithm;
 			NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineBase *_nativeNeuralNet;
+            NeuralNetNative::RestrictedBoltzmannMachine::GradientFunction *_nativeGradientFunction;
 			StandardTypesNative::TrainSingle **_nativeTrainData;
 			StandardTypesNative::TrainSingle **_nativeTestData;
 			int _nativeTrainDataSize;
@@ -22,8 +23,13 @@ namespace NeuralNetNativeWrapper {
 		protected:
 			RestrictedBoltzmannMachine::RestrictedBoltzmannMachine^ _restrictedBoltzmannMachine;
 		public:
-			FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData, float fastWeightsDecreaseFactor);
-			FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData, IList<TrainSingle^>^ testData, float fastWeightsDecreaseFactor);
+			FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
+                                                      RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                                      float fastWeightsDecreaseFactor);
+			FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
+                                                      IList<TrainSingle^>^ testData,
+                                                      RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                                      float fastWeightsDecreaseFactor);
 			~FastPersistentContrastiveDivergenceNative(void);
 			virtual void Start(void) override;
 			virtual void Stop(void) override;
@@ -36,6 +42,9 @@ namespace NeuralNetNativeWrapper {
 			void AllocateNativeTrainData(IList<TrainSingle^>^ trainData);
 			void AllocateNativeTestData(IList<TrainSingle^>^ testData);
 			void DeleteNativeTrainData(void);
+            void DeleteNativeTestData(void);
+            void AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient);
+            void DeleteNativeGradientFunction(void);
 		};
 	}
 }

@@ -1,3 +1,5 @@
+#define NEURALNETNATIVEAPI
+
 #include "LinearGradient.h"
 #include <tbb\tbb.h>
 #include <tbb\task_scheduler_init.h>
@@ -8,6 +10,8 @@ using namespace tbb;
 
 namespace NeuralNetNative {
 	namespace RestrictedBoltzmannMachine {
+        void LinearGradient::PrepareToNextPackage(int nextPackageSize) {}
+        
         void LinearGradient::StorePositivePhaseData(float *visibleStates, float *hiddenStates) {
             float *packageDerivativeForWeights = Gradients->GetPackageDerivativeForWeights();
             float *packageDerivativeForHiddenBias = Gradients->GetPackageDerivativeForHiddenBias();

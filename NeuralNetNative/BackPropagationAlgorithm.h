@@ -45,7 +45,7 @@ namespace NeuralNetNative {
 			BackPropagationAlgorithm(StandardTypesNative::TrainPair **trainData, int trainDataSize, StandardTypesNative::TrainPair **testData, int testDataSize);
 			~BackPropagationAlgorithm(void);
 			virtual void InitilazeMethod(NeuralNet *neuralNet, TrainProperties *trainProperties);
-			virtual TrainProperties* Properties(void);
+			virtual TrainProperties* Properties(void) const;
 		private:
 			void AllocateMemory(void);
 			int CalculatePackagesCount(void);

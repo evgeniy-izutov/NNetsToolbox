@@ -1,3 +1,5 @@
+#define NEURALNETNATIVEAPI
+
 #include "RbmGradients.h"
 #include <malloc.h>
 #include <algorithm>

@@ -174,7 +174,7 @@ namespace LettersRecovery {
 		}
         
         private void TrainNeuralNet(float[] visibleUnitsProbability) {
-            const int iterationCount = 15;
+            const int iterationCount = 2;
             _trainProperties = new TrainProperties {
         		Epsilon = 0.001f,
         		MaxIterationCount = iterationCount,
@@ -183,8 +183,8 @@ namespace LettersRecovery {
 				CvLimit = 10.0f,
 				BaseLearnSpeed = 0.001f,
 				Momentum = 0.94f,
-				//LearnFactorStrategy = new LinearFactor(1f, 1f/10f, iterationCount),
-                LearnFactorStrategy = new ConstantFactor(),
+				LearnFactorStrategy = new LinearFactor(1f, 1f/10f, iterationCount),
+                //LearnFactorStrategy = new ConstantFactor(),
 				
 				AddedLearnFactorStrategy = new LinearFactor(0.8f, 2f, iterationCount),
 
@@ -199,8 +199,8 @@ namespace LettersRecovery {
 				//Regularization = new L2Regularization(0.01f)
         	};
 
-	        //var trainMethod = new FastPersistentContrastiveDivergence(_trainData, _testData, new LinearGradient(), 19f/20f);
-			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, 1);
+	        var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
+			//var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, new LinearGradient(), 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

@@ -89,6 +89,7 @@
     <ClInclude Include="BackPropagationAlgorithm.h" />
     <ClInclude Include="BaseNeuralBlock.h" />
     <ClInclude Include="BinaryBinaryRbm.h" />
+    <ClInclude Include="CenteredGradient.h" />
     <ClInclude Include="ConstantFactor.h" />
     <ClInclude Include="ContrastiveDivergence.h" />
     <ClInclude Include="EliminationRegularization.h" />
@@ -109,6 +110,7 @@
     <ClInclude Include="NeuralNetFactory.h" />
     <ClInclude Include="NoRegularization.h" />
     <ClInclude Include="RbmGradients.h" />
+    <ClInclude Include="RbmTrainMethod.h" />
     <ClInclude Include="Regularization.h" />
     <ClInclude Include="RestrictedBoltzmannMachine.h" />
     <ClInclude Include="RestrictedBoltzmannMachineFactory.h" />
@@ -125,6 +127,7 @@
     <ClCompile Include="BackPropagationAlgorithm.cpp" />
     <ClCompile Include="BaseNeuralBlock.cpp" />
     <ClCompile Include="BinaryBinaryRbm.cpp" />
+    <ClCompile Include="CenteredGradient.cpp" />
     <ClCompile Include="ConstantFactor.cpp" />
     <ClCompile Include="ContrastiveDivergence.cpp" />
     <ClCompile Include="EliminationRegularization.cpp" />
@@ -140,6 +143,7 @@
     <ClCompile Include="MultyLayerPerceptronFactory.cpp" />
     <ClCompile Include="NoRegularization.cpp" />
     <ClCompile Include="RbmGradients.cpp" />
+    <ClCompile Include="RbmTrainMethod.cpp" />
     <ClCompile Include="Regularization.cpp" />
     <ClCompile Include="RestrictedBoltzmannMachine.cpp" />
     <ClCompile Include="RestrictedBoltzmannMachineFactory.cpp" />

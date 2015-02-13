@@ -20,8 +20,8 @@ namespace StandardTypesNative {
 		~RandomAccessIterator(void);
 		void RefreshRandomAccess(void);
 		T& Next(void);
-		int Size(void);
-		T* Collection(void);
+		int Size(void) const;
+		T* Collection(void) const;
 	private:
 		static int* CreateStartPositions(int size);
 	};

@@ -12,21 +12,43 @@
 #include "ConstantFactor.h"
 #include "ReverseFactor.h"
 #include "SqrtReverseFactor.h"
+#include "LinearGradient.h"
+#include "CenteredGradient.h"
 
 namespace NeuralNetNativeWrapper {
 	namespace RestrictedBoltzmannMachineNativeWrapper {
-		ContrastiveDivergenceNative::ContrastiveDivergenceNative(IList<TrainSingle^>^ trainData, int methodStepsCount) {
+		ContrastiveDivergenceNative
+            ::ContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
+                                          RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                          int methodStepsCount) {
 			AllocateNativeTrainData(trainData);
-			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine::ContrastiveDivergence(_nativeTrainData, _nativeTrainDataSize, methodStepsCount);
+
+            AllocateNativeGradientFunction(gradient);
+
+			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine
+                                   ::ContrastiveDivergence(_nativeTrainData, _nativeTrainDataSize,
+                                                           _nativeGradientFunction, methodStepsCount);
+                        
 
 			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &ContrastiveDivergenceNative::IterationCompletedHandler));
 			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &ContrastiveDivergenceNative::IterativeProcessFinishedHandler));
 		}
 
-		ContrastiveDivergenceNative::ContrastiveDivergenceNative(IList<TrainSingle^>^ trainData, IList<TrainSingle^>^ testData, int methodStepsCount) {
+		ContrastiveDivergenceNative
+            ::ContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
+                                          IList<TrainSingle^>^ testData,
+                                          RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                          int methodStepsCount) {
 			AllocateNativeTrainData(trainData);
 			AllocateNativeTestData(testData);
-			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine::ContrastiveDivergence(_nativeTrainData, _nativeTestData, _nativeTrainDataSize, _nativeTestDataSize, methodStepsCount);
+
+            AllocateNativeGradientFunction(gradient);
+
+			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine
+                                   ::ContrastiveDivergence(_nativeTrainData, _nativeTestData, 
+                                                           _nativeTrainDataSize, _nativeTestDataSize,
+                                                           _nativeGradientFunction,
+                                                           methodStepsCount);
 
 			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &ContrastiveDivergenceNative::IterationCompletedHandler));
 			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &ContrastiveDivergenceNative::IterativeProcessFinishedHandler));
@@ -34,6 +56,7 @@ namespace NeuralNetNativeWrapper {
 		
 		ContrastiveDivergenceNative::~ContrastiveDivergenceNative(void) {
 			DeleteNativeTrainData();
+            DeleteNativeTestData();
 			DeleteNativeNeuralNet();
 			DeleteNativeProperties();
 			DeleteNativeAlgorithm();
@@ -175,6 +198,16 @@ namespace NeuralNetNativeWrapper {
 			}
 		}
 
+        void ContrastiveDivergenceNative::DeleteNativeTestData(void) {
+			if (_nativeTestData != 0) {
+				for (int i = 0; i < _nativeTestDataSize; i++) {
+					_mm_free(_nativeTestData[i]);
+				}
+				delete [] _nativeTestData;
+				_nativeTestData = 0;
+			}
+		}
+
 		void ContrastiveDivergenceNative::DeleteNativeAlgorithm(void) {
 			if (_nativeAlgorithm != 0) {
 				delete _nativeAlgorithm->IterationCompleted;
@@ -183,5 +216,18 @@ namespace NeuralNetNativeWrapper {
 				_nativeAlgorithm = 0;
 			}
 		}
+
+        void ContrastiveDivergenceNative::AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient) {
+		    if (dynamic_cast<RestrictedBoltzmannMachine::LinearGradient^>(gradient) != nullptr) {
+		    	_nativeGradientFunction = new NeuralNetNative::RestrictedBoltzmannMachine::LinearGradient();
+		    }
+            else {
+                _nativeGradientFunction = new NeuralNetNative::RestrictedBoltzmannMachine::CenteredGradient();
+		    }
+        }
+
+        void ContrastiveDivergenceNative::DeleteNativeGradientFunction(void) {
+            delete _nativeGradientFunction;
+        }
 	}
 }

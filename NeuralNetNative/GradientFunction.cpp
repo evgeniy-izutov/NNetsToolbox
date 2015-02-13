@@ -1,3 +1,5 @@
+#define NEURALNETNATIVEAPI
+
 #include "GradientFunction.h"
 
 namespace NeuralNetNative {

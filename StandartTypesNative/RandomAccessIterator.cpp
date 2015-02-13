@@ -43,7 +43,7 @@ namespace StandardTypesNative {
 	}
 
 	template<typename T>
-	int RandomAccessIterator<T>::Size(void) {
+	int RandomAccessIterator<T>::Size(void) const {
 		return _size;
 	}
 
@@ -57,7 +57,7 @@ namespace StandardTypesNative {
 	}
 
 	template<typename T>
-	T* RandomAccessIterator<T>::Collection(void) {
+	T* RandomAccessIterator<T>::Collection(void) const {
 		return _sourceList;
 	}
 }

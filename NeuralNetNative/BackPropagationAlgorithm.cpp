@@ -56,7 +56,7 @@ namespace NeuralNetNative {
 			return packagesCount;
 		}
 
-		TrainProperties* BackPropagationAlgorithm::Properties(void) {
+		TrainProperties* BackPropagationAlgorithm::Properties(void) const {
 			return _properties;
 		}
 

@@ -88,7 +88,8 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			return neuralNet.HiddenStates;
 		}
 
-		protected override void RestoreVisibleStates(int packageId) {}
+	    protected override void RestoreVisibleStates(int packageId) {
+	    }
 
 		protected override void ModifyWeightsOfNeuronNet() {
 			var regularizationFactorPerPackage = 1f/packagesCount;

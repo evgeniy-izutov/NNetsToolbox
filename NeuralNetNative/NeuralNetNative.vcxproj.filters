@@ -212,6 +212,12 @@
     <ClInclude Include="LinearGradient.h">
       <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
     </ClInclude>
+    <ClInclude Include="RbmTrainMethod.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="CenteredGradient.h">
+      <Filter>Заголовочные файлы\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Regularization.cpp">
@@ -293,6 +299,12 @@
       <Filter>Файлы исходного кода\Train\LearnFactorStrategy</Filter>
     </ClCompile>
     <ClCompile Include="LinearGradient.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
+    </ClCompile>
+    <ClCompile Include="RbmTrainMethod.cpp">
+      <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="CenteredGradient.cpp">
       <Filter>Файлы исходного кода\NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients</Filter>
     </ClCompile>
   </ItemGroup>

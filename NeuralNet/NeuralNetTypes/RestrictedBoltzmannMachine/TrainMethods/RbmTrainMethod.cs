@@ -45,7 +45,9 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			properties = trainProperties;
 			packageFactor = 1.0f/properties.PackageSize;
 			packagesCount = CalculatePackagesCount();
+
 			AllocateMemory();
+
 			ProcessSate = IterativeProcessState.NotStarted;
 		}
 
@@ -88,11 +90,11 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		protected abstract void ClearReference();
 
 		private int CalculatePackagesCount() {
-			var packagesCount = _trainDataIterator.Size()/properties.PackageSize;
+			var count = _trainDataIterator.Size()/properties.PackageSize;
 			if (_trainDataIterator.Size()%properties.PackageSize != 0) {
-				packagesCount++;
+				count++;
 			}
-			return packagesCount;
+			return count;
 		}
 
 		private float TestModel(IList<TrainSingle> data) {

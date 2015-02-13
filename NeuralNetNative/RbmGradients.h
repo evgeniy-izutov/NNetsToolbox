@@ -1,8 +1,10 @@
 #pragma once
 
+#include "ExportDll.h"
+
 namespace NeuralNetNative {
 	namespace RestrictedBoltzmannMachine {
-        class RbmGradients {
+        class NEURALNETNATIVE_EXPORT RbmGradients {
         public:
 	        RbmGradients(int visibleStatesCount, int hiddenStatesCount);
 	        ~RbmGradients(void);

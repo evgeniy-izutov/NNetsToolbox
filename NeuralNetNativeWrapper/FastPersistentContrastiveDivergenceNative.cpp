@@ -12,21 +12,43 @@
 #include "ConstantFactor.h"
 #include "ReverseFactor.h"
 #include "SqrtReverseFactor.h"
+#include "LinearGradient.h"
+#include "CenteredGradient.h"
 
 namespace NeuralNetNativeWrapper {
 	namespace RestrictedBoltzmannMachineNativeWrapper {
-		FastPersistentContrastiveDivergenceNative::FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData, float fastWeightsDecreaseFactor) {
+		FastPersistentContrastiveDivergenceNative
+            ::FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
+                                                        RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                                        float fastWeightsDecreaseFactor) {
 			AllocateNativeTrainData(trainData);
-			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine::FastPersistentContrastiveDivergence(_nativeTrainData, _nativeTrainDataSize, fastWeightsDecreaseFactor);
+
+            AllocateNativeGradientFunction(gradient);
+
+			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine
+                                   ::FastPersistentContrastiveDivergence(_nativeTrainData, _nativeTrainDataSize,
+                                                                         _nativeGradientFunction,
+                                                                         fastWeightsDecreaseFactor);
 
 			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &FastPersistentContrastiveDivergenceNative::IterationCompletedHandler));
 			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &FastPersistentContrastiveDivergenceNative::IterativeProcessFinishedHandler));
 		}
 
-		FastPersistentContrastiveDivergenceNative::FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData, IList<TrainSingle^>^ testData, float fastWeightsDecreaseFactor) {
-			AllocateNativeTrainData(trainData);
+		FastPersistentContrastiveDivergenceNative
+            ::FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
+                                                        IList<TrainSingle^>^ testData,
+                                                        RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                                        float fastWeightsDecreaseFactor) {
+            AllocateNativeTrainData(trainData);
 			AllocateNativeTestData(testData);
-			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine::FastPersistentContrastiveDivergence(_nativeTrainData, _nativeTestData, _nativeTrainDataSize, _nativeTestDataSize, fastWeightsDecreaseFactor);
+
+            AllocateNativeGradientFunction(gradient);
+
+			_nativeAlgorithm = new NeuralNetNative::RestrictedBoltzmannMachine
+                                   ::FastPersistentContrastiveDivergence(_nativeTrainData, _nativeTestData,
+                                                                         _nativeTrainDataSize, _nativeTestDataSize,
+                                                                         _nativeGradientFunction,
+                                                                         fastWeightsDecreaseFactor);
 
 			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &FastPersistentContrastiveDivergenceNative::IterationCompletedHandler));
 			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &FastPersistentContrastiveDivergenceNative::IterativeProcessFinishedHandler));
@@ -34,6 +56,7 @@ namespace NeuralNetNativeWrapper {
 		
 		FastPersistentContrastiveDivergenceNative::~FastPersistentContrastiveDivergenceNative(void) {
 			DeleteNativeTrainData();
+            DeleteNativeTestData();
 			DeleteNativeNeuralNet();
 			DeleteNativeProperties();
 			DeleteNativeAlgorithm();
@@ -175,6 +198,16 @@ namespace NeuralNetNativeWrapper {
 			}
 		}
 
+        void FastPersistentContrastiveDivergenceNative::DeleteNativeTestData(void) {
+			if (_nativeTestData != 0) {
+				for (int i = 0; i < _nativeTestDataSize; i++) {
+					_mm_free(_nativeTestData[i]);
+				}
+				delete [] _nativeTestData;
+				_nativeTestData = 0;
+			}
+		}
+
 		void FastPersistentContrastiveDivergenceNative::DeleteNativeAlgorithm(void) {
 			if (_nativeAlgorithm != 0) {
 				delete _nativeAlgorithm->IterationCompleted;
@@ -183,5 +216,18 @@ namespace NeuralNetNativeWrapper {
 				_nativeAlgorithm = 0;
 			}
 		}
+
+        void FastPersistentContrastiveDivergenceNative::AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient) {
+		    if (dynamic_cast<RestrictedBoltzmannMachine::LinearGradient^>(gradient) != nullptr) {
+		    	_nativeGradientFunction = new NeuralNetNative::RestrictedBoltzmannMachine::LinearGradient();
+		    }
+            else {
+                _nativeGradientFunction = new NeuralNetNative::RestrictedBoltzmannMachine::CenteredGradient();
+		    }
+        }
+
+        void FastPersistentContrastiveDivergenceNative::DeleteNativeGradientFunction(void) {
+            delete _nativeGradientFunction;
+        }
 	}
 }
