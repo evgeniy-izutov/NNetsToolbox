@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGA", "TestGA\TestGA.csp
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LettersRecovery", "LettersRecovery\LettersRecovery.csproj", "{F5DD7FE5-F2F3-45AD-9C7B-1718471FAE38}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D660A70-A7B3-4DCE-9331-F98FAD232665} = {9D660A70-A7B3-4DCE-9331-F98FAD232665}
+		{008D30DF-D981-415D-BD54-5D90DF040A3F} = {008D30DF-D981-415D-BD54-5D90DF040A3F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

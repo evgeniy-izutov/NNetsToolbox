@@ -21,10 +21,9 @@ namespace NeuralNetNative {
 			[=](const blocked_range<size_t>& r)
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
-					int startIndex = j*VisibleStatesCount;
 				    int hiddenSate = hiddenStates[j];
 				    for (int i = 0; i < VisibleStatesCount; i++) {
-				    	packageDerivativeForWeights[startIndex + i] += visibleStates[i]*hiddenSate;
+				    	packageDerivativeForWeights[j*VisibleStatesCount + i] += visibleStates[i]*hiddenSate;
 				    }
 				    packageDerivativeForHiddenBias[j] += hiddenSate;
 				}
@@ -48,10 +47,9 @@ namespace NeuralNetNative {
 			[=](const blocked_range<size_t>& r)
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
-					int startIndex = j*VisibleStatesCount;
 				    int hiddenSate = hiddenStates[j];
 				    for (int i = 0; i < VisibleStatesCount; i++) {
-				    	packageDerivativeForWeights[startIndex + i] -= visibleStates[i]*hiddenSate;
+				    	packageDerivativeForWeights[j*VisibleStatesCount + i] -= visibleStates[i]*hiddenSate;
 				    }
 				    packageDerivativeForHiddenBias[j] -= hiddenSate;
 				}
@@ -75,9 +73,8 @@ namespace NeuralNetNative {
 			[=](const blocked_range<size_t>& r)
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
-					int startIndex = j*VisibleStatesCount;
 				    for (int i = 0; i < VisibleStatesCount; i++) {
-				    	packageDerivativeForWeights[startIndex + i] *= packageFactor;
+				    	packageDerivativeForWeights[j*VisibleStatesCount + i] *= packageFactor;
 				    }
 				    packageDerivativeForHiddenBias[j] *= packageFactor;
 				}

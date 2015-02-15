@@ -227,7 +227,10 @@ namespace NeuralNetNativeWrapper {
         }
 
         void ContrastiveDivergenceNative::DeleteNativeGradientFunction(void) {
-            delete _nativeGradientFunction;
+            if (_nativeGradientFunction != 0) {
+                delete _nativeGradientFunction;
+                _nativeGradientFunction = 0;
+            }
         }
 	}
 }

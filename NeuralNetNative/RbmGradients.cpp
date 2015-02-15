@@ -23,9 +23,6 @@ namespace NeuralNetNative {
             _mm_free(_packageDerivativeForWeights);
             _mm_free(_packageDerivativeForVisibleBias);
             _mm_free(_packageDerivativeForHiddenBias);
-
-            _visibleStatesCount = 0;
-            _hiddenStatesCount = 0;
         }
 
         int RbmGradients::GetVisibleStatesCount(void) const {

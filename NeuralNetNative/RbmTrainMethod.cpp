@@ -33,9 +33,13 @@ namespace NeuralNetNative {
 
         RbmTrainMethod::~RbmTrainMethod(void) {
             _mm_free(_neuronNetOutput);
+            
             delete _trainDataIterator;
             
-            //delete gradients;
+            if (gradients != 0) {
+                delete gradients;
+                gradients = 0;
+            }
         }
 
         void RbmTrainMethod::RunIterativeProcess(void) {
@@ -65,6 +69,11 @@ namespace NeuralNetNative {
         void RbmTrainMethod::ApplyResults(void) {
             if (ProcessSate == StandardTypesNative::IterativeProcessState::Finished) {
 				DeleteTemporaryData();
+
+                if (gradients != 0) {
+                    delete gradients;
+                    gradients = 0;
+                }
 			}
         }
 

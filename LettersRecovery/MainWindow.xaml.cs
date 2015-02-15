@@ -199,8 +199,8 @@ namespace LettersRecovery {
 				//Regularization = new L2Regularization(0.01f)
         	};
 
-	        var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
-			//var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, new LinearGradient(), 1);
+	        //var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
+			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, new LinearGradient(), 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 
