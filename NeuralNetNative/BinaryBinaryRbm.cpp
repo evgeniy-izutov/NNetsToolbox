@@ -5,6 +5,7 @@
 #include <tbb\task_scheduler_init.h>
 #include <tbb\parallel_for.h>
 #include <tbb\blocked_range.h>
+#include <algorithm>
 #include "BinaryBinaryRbm.h"
 
 using namespace tbb;
@@ -15,15 +16,12 @@ namespace NeuralNetNative {
 		}
 		
 		void BinaryBinaryRbm::VisibleLayerCalculateActivity(void) {
-			for (int i = 0; i < _visibleStatesCount; i++) {
-				_visibleStates[i] = _visibleStatesBias[i];
-			}
+            std::copy(_visibleStatesBias, _visibleStatesBias + _visibleStatesCount, _visibleStates);
 
 			for (int j = 0; j < _hiddenStatesCount; j++) {
-				int weightsStartPos = j*_visibleStatesCount;
 				float hiddenState = _hiddenStates[j];
 				for (int i = 0; i < _visibleStatesCount; i++) {
-					_visibleStates[i] += hiddenState*_weights[weightsStartPos + i];
+					_visibleStates[i] += hiddenState*_weights[j*_visibleStatesCount + i];
 				}
 			}
 
@@ -38,10 +36,8 @@ namespace NeuralNetNative {
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
 					float sum = _hiddenStatesBias[j];
-					int weightsStartPos = j*_visibleStatesCount;
-					#pragma simd
 					for (int i = 0; i < _visibleStatesCount; i++) {
-						sum += _visibleStates[i]*_weights[weightsStartPos + i];
+						sum += _visibleStates[i]*_weights[j*_visibleStatesCount + i];
 					}
 					_hiddenStates[j] = 1.0f/(1.0f + expf(-sum));
 				}
@@ -54,10 +50,8 @@ namespace NeuralNetNative {
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
 					float sum = _hiddenStatesBias[j];
-					int weightsStartPos = j*_visibleStatesCount;
-					#pragma simd
 					for (int i = 0; i < _visibleStatesCount; i++) {
-						sum += newVisibleState[i]*_weights[weightsStartPos + i];
+						sum += newVisibleState[i]*_weights[j*_visibleStatesCount + i];
 					}
 					_hiddenStates[j] = 1.0f/(1.0f + expf(-sum));
 				}
@@ -70,10 +64,10 @@ namespace NeuralNetNative {
 			}
 
 			for (int j = 0; j < _hiddenStatesCount; j++) {
-				int weightsStartPos = j*_visibleStatesCount;
 				float hiddenState = _hiddenStates[j];
 				for (int i = 0; i < _visibleStatesCount; i++) {
-					_visibleStates[i] += hiddenState*(_weights[weightsStartPos + i] + addedWeight[weightsStartPos + i]);
+					_visibleStates[i] += hiddenState*(_weights[j*_visibleStatesCount + i] +
+                                         addedWeight[j*_visibleStatesCount + i]);
 				}
 			}
 
@@ -88,10 +82,9 @@ namespace NeuralNetNative {
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
 					float sum = _hiddenStatesBias[j] + addedHiddenBias[j];
-					int weightsStartPos = j*_visibleStatesCount;
-					#pragma simd
 					for (int i = 0; i < _visibleStatesCount; i++) {
-						sum += _visibleStates[i]*(_weights[weightsStartPos + i] + addedWeight[weightsStartPos + i]);
+						sum += _visibleStates[i]*(_weights[j*_visibleStatesCount + i] +
+                               addedWeight[j*_visibleStatesCount + i]);
 					}
 					_hiddenStates[j] = 1.0f/(1.0f + expf(-sum));
 				}
@@ -104,10 +97,9 @@ namespace NeuralNetNative {
 			{
 				for (int j = r.begin(); j < r.end(); j++) {
 					float sum = _hiddenStatesBias[j] + addedHiddenBias[j];
-					int weightsStartPos = j*_visibleStatesCount;
-					#pragma simd
 					for (int i = 0; i < _visibleStatesCount; i++) {
-						sum += newVisibleState[i]*(_weights[weightsStartPos + i] + addedWeight[weightsStartPos + i]);
+						sum += newVisibleState[i]*(_weights[j*_visibleStatesCount + i] +
+                               addedWeight[j*_visibleStatesCount + i]);
 					}
 					_hiddenStates[j] = 1.0f/(1.0f + expf(-sum));
 				}

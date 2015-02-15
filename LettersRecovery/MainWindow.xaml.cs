@@ -174,7 +174,7 @@ namespace LettersRecovery {
 		}
         
         private void TrainNeuralNet(float[] visibleUnitsProbability) {
-            const int iterationCount = 2;
+            const int iterationCount = 4;
             _trainProperties = new TrainProperties {
         		Epsilon = 0.001f,
         		MaxIterationCount = iterationCount,

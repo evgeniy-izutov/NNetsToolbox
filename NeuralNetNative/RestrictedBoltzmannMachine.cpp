@@ -7,6 +7,7 @@
 #include <tbb\task_scheduler_init.h>
 #include <tbb\parallel_for.h>
 #include <tbb\blocked_range.h>
+#include <algorithm>
 
 using namespace tbb;
 
@@ -76,23 +77,11 @@ namespace NeuralNetNative {
 		}
 
 		void RestrictedBoltzmannMachineBase::VisibleLayerCopyTo(float *target) {
-			parallel_for( blocked_range<size_t>(0, _visibleStatesCount),
-			[=](const blocked_range<size_t>& r)
-			{
-				for (int i = r.begin(); i < r.end(); i++) {
-					target[i] = _visibleStates[i];
-				}
-			});
+            std::copy(_visibleStates, _visibleStates + _visibleStatesCount, target);
 		}
 		
 		void RestrictedBoltzmannMachineBase::HiddenLayerCopyTo(float *target) {
-			parallel_for( blocked_range<size_t>(0, _hiddenStatesCount),
-			[=](const blocked_range<size_t>& r)
-			{
-				for (int i = r.begin(); i < r.end(); i++) {
-					target[i] = _hiddenStates[i];
-				}
-			});
+			std::copy(_hiddenStates, _hiddenStates + _hiddenStatesCount, target);
 		}
 		
 		void RestrictedBoltzmannMachineBase::Predict(const float *input, float *output) {
@@ -100,7 +89,7 @@ namespace NeuralNetNative {
 			HiddenLayerSampling();
 			VisibleLayerCalculateActivity();
 			VisibleLayerSampling();
-			SetOutput(output);
+            VisibleLayerCopyTo(output);
 		}
 
 		int RestrictedBoltzmannMachineBase::GetVisibleStatesCount(void) {
@@ -129,12 +118,6 @@ namespace NeuralNetNative {
 
 		float* RestrictedBoltzmannMachineBase::GetHiddenStates(void) {
 			return _hiddenStates;
-		}
-
-		void RestrictedBoltzmannMachineBase::SetOutput(float *output) {
-			for (int i = 0; i < _visibleStatesCount; i++) {
-				output[i] = _visibleStates[i];
-			}
 		}
 	}
 }

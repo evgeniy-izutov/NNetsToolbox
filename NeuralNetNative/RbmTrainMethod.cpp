@@ -122,19 +122,19 @@ namespace NeuralNetNative {
 			ModifyWeightsOfNeuronNet();
         }
 
-        void RbmTrainMethod::InitilazeMethod(NeuralNet *neuralNet, TrainProperties *trainProperties) {
-			this->neuralNet = dynamic_cast<RestrictedBoltzmannMachineBase*>(neuralNet);
-			if (this->neuralNet == 0) {
+        void RbmTrainMethod::InitilazeMethod(NeuralNet *newNeuralNet, TrainProperties *newProperties) {
+			neuralNet = dynamic_cast<RestrictedBoltzmannMachineBase*>(newNeuralNet);
+			if (neuralNet == 0) {
 				return;
 			}
 
-            visibleStatesCount = this->neuralNet->GetVisibleStatesCount();
-            hiddenStatesCount = this->neuralNet->GetHiddenStatesCount();
+            visibleStatesCount = neuralNet->GetVisibleStatesCount();
+            hiddenStatesCount = neuralNet->GetHiddenStatesCount();
 
             gradients = new RbmGradients(visibleStatesCount, hiddenStatesCount);
 			_gradientFunction->Initialize(gradients);
 				
-			properties = trainProperties;
+			properties = newProperties;
 			_packageFactor = 1.0f/properties->PackageSize;
 			packagesCount = CalculatePackagesCount();
 
