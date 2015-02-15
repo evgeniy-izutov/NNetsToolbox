@@ -217,12 +217,38 @@ namespace NeuralNetNativeWrapper {
 			}
 		}
 
-        void ContrastiveDivergenceNative::AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient) {
-		    if (dynamic_cast<RestrictedBoltzmannMachine::LinearGradient^>(gradient) != nullptr) {
-		    	_nativeGradientFunction = new NeuralNetNative::RestrictedBoltzmannMachine::LinearGradient();
+        void ContrastiveDivergenceNative
+            ::AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient) {
+
+            if (dynamic_cast<RestrictedBoltzmannMachine::CenteredGradient^>(gradient) != nullptr) {
+		    	RestrictedBoltzmannMachine::CenteredGradient^ centeredGradient =
+                    dynamic_cast<RestrictedBoltzmannMachine::CenteredGradient^>(gradient);
+                
+                int visibleOffsetsCount = centeredGradient->VisibleOffsets.Length;
+                float *visibleOffsets = new float[visibleOffsetsCount];
+                for (int i = 0; i < visibleOffsetsCount; i++) {
+                    visibleOffsets[i] = (float) centeredGradient->VisibleOffsets[i];
+                }
+
+                int hiddenOffsetsCount = centeredGradient->HiddenOffsets.Length;
+                float *hiddenOffsets = new float[hiddenOffsetsCount];
+                for (int i = 0; i < hiddenOffsetsCount; i++) {
+                    hiddenOffsets[i] = (float) centeredGradient->HiddenOffsets[i];
+                }
+                
+                _nativeGradientFunction = new NeuralNetNative
+                                              ::RestrictedBoltzmannMachine
+                                              ::CenteredGradient(centeredGradient->SlidingFactor,
+                                                                 visibleOffsets, visibleOffsetsCount,
+                                                                 hiddenOffsets, hiddenOffsetsCount);
+
+                delete [] visibleOffsets;
+                delete [] hiddenOffsets;
 		    }
             else {
-                _nativeGradientFunction = new NeuralNetNative::RestrictedBoltzmannMachine::CenteredGradient();
+                _nativeGradientFunction = new NeuralNetNative
+                                              ::RestrictedBoltzmannMachine
+                                              ::LinearGradient();
 		    }
         }
 

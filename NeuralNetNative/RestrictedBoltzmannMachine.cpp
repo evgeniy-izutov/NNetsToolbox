@@ -37,43 +37,15 @@ namespace NeuralNetNative {
 		}
 		
 		void RestrictedBoltzmannMachineBase::VisibleLayerSampling(void) {
-			parallel_for( blocked_range<size_t>(0, _visibleStatesCount),
-			[=](const blocked_range<size_t>& r)
-			{
-				for (int i = r.begin(); i < r.end(); i++) {
-					_visibleStates[i] = (float) islessf((*_uniformDistribution)(*_randomDevice), _visibleStates[i]);
-				}
-			});
+			for (int i = 0; i < _visibleStatesCount; i++) {
+				_visibleStates[i] = (float) islessf((*_uniformDistribution)(*_randomDevice), _visibleStates[i]);
+			}
 		}
 
 		void RestrictedBoltzmannMachineBase::HiddenLayerSampling(void) {
-			parallel_for( blocked_range<size_t>(0, _hiddenStatesCount),
-			[=](const blocked_range<size_t>& r)
-			{
-				for (int i = r.begin(); i < r.end(); i++) {
-					_hiddenStates[i] = (float) islessf((*_uniformDistribution)(*_randomDevice), _hiddenStates[i]);
-				}
-			});
-		}
-
-		void RestrictedBoltzmannMachineBase::VisibleLayerSampling(float *target) {
-			parallel_for( blocked_range<size_t>(0, _visibleStatesCount),
-			[=](const blocked_range<size_t>& r)
-			{
-				for (int i = r.begin(); i < r.end(); i++) {
-					target[i] = (float) islessf((*_uniformDistribution)(*_randomDevice), _visibleStates[i]);
-				}
-			});
-		}
-
-		void RestrictedBoltzmannMachineBase::HiddenLayerSampling(float *target) {
-			parallel_for( blocked_range<size_t>(0, _hiddenStatesCount),
-			[=](const blocked_range<size_t>& r)
-			{
-				for (int i = r.begin(); i < r.end(); i++) {
-					target[i] = (float) islessf((*_uniformDistribution)(*_randomDevice), _hiddenStates[i]);
-				}
-			});
+			for (int i = 0; i < _hiddenStatesCount; i++) {
+				_hiddenStates[i] = (float) islessf((*_uniformDistribution)(*_randomDevice), _hiddenStates[i]);
+			}
 		}
 
 		void RestrictedBoltzmannMachineBase::VisibleLayerCopyTo(float *target) {

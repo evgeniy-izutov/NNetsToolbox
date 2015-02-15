@@ -174,7 +174,7 @@ namespace LettersRecovery {
 		}
         
         private void TrainNeuralNet(float[] visibleUnitsProbability) {
-            const int iterationCount = 4;
+            const int iterationCount = 15;
             _trainProperties = new TrainProperties {
         		Epsilon = 0.001f,
         		MaxIterationCount = iterationCount,
@@ -183,10 +183,10 @@ namespace LettersRecovery {
 				CvLimit = 10.0f,
 				BaseLearnSpeed = 0.001f,
 				Momentum = 0.94f,
-				LearnFactorStrategy = new LinearFactor(1f, 1f/10f, iterationCount),
+				LearnFactorStrategy = new LinearFactor(1f, 1f/30f, iterationCount),
                 //LearnFactorStrategy = new ConstantFactor(),
 				
-				AddedLearnFactorStrategy = new LinearFactor(0.8f, 2f, iterationCount),
+				AddedLearnFactorStrategy = new LinearFactor(1f, 0.5f, iterationCount),
 
 				SpeedBonus = 0.01f,
 				SpeedPenalty = 0.99f,
@@ -199,8 +199,13 @@ namespace LettersRecovery {
 				//Regularization = new L2Regularization(0.01f)
         	};
 
+            var gradientFunction = new CenteredGradient(0.5f,
+                                                        visibleUnitsProbability,
+                                                        Enumerable.Repeat(0.5f, HiddenStatesCount).ToArray());
+            //var gradientFunction = new LinearGradient();
+
 	        //var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
-			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, new LinearGradient(), 1);
+			var trainMethod = new NativeWrapper.FastPersistentContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 19f/20f);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

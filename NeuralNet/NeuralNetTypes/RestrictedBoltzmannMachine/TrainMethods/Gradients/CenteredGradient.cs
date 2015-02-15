@@ -3,14 +3,11 @@ using System.Linq;
 
 namespace NeuralNet.RestrictedBoltzmannMachine {
 	public class CenteredGradient : GradientFunction {
-		private readonly InitializeType _initializeType;
-		private readonly float _slidingAverage;
-		private readonly float _startVisibleOffsetScalar;
-		private readonly float _startHiddenOffsetScalar;
-		private float[] _visibleOffsetVector;
-		private float[] _hiddenOffsetVector;
-		private float[] _visibleOffsetNewVector;
-		private float[] _hiddenOffsetNewVector;
+		private readonly float _slidingFactor;
+		private float[] _visibleOffsets;
+		private float[] _hiddenOffsets;
+		private float[] _visibleOffsetsNew;
+		private float[] _hiddenOffsetsNew;
 		private float[] _dataVisibleHidden;
 		private float[] _dataVisible;
 		private float[] _dataHidden;
@@ -19,40 +16,33 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		private float[] _modelHidden;
 		private float _packageFactor = 1f;
 
-		private enum InitializeType {
-			Constant,
-			Vector
+		public CenteredGradient(float slidingFactor, float[] visibleOffsets, float[] hiddenOffsets) {
+			_slidingFactor = slidingFactor;
+			
+			_visibleOffsets = new float[visibleOffsets.Length];
+			Array.Copy(visibleOffsets, _visibleOffsets, visibleOffsets.Length);
+
+			_hiddenOffsets = new float[hiddenOffsets.Length];
+			Array.Copy(hiddenOffsets, _hiddenOffsets, hiddenOffsets.Length);
 		}
 
-		public CenteredGradient(float slidingAverage, float startVisibleOffsetScalar, float startHiddenOffsetScalar = 0.5f) {
-			_slidingAverage = slidingAverage;
-			_startVisibleOffsetScalar = startVisibleOffsetScalar;
-			_startHiddenOffsetScalar = startHiddenOffsetScalar;
-			
-			_initializeType = InitializeType.Constant;
-		}
+	    public float SlidingFactor {
+	        get { return _slidingFactor; }
+	    }
 
-		public CenteredGradient(float slidingAverage, float[] startVisibleOffsetVector, float[] startHiddenOffsetVector = null) {
-			_slidingAverage = slidingAverage;
-			
-			if (startVisibleOffsetVector != null) {
-				_visibleOffsetVector = new float[startVisibleOffsetVector.Length];
-				Array.Copy(startVisibleOffsetVector, _visibleOffsetVector, startVisibleOffsetVector.Length);
-			}
+	    public float[] VisibleOffsets {
+	        get { return _visibleOffsets; }
+	    }
 
-			if (startHiddenOffsetVector != null) {
-				_visibleOffsetVector = new float[startHiddenOffsetVector.Length];
-				Array.Copy(startHiddenOffsetVector, _hiddenOffsetVector, startHiddenOffsetVector.Length);
-			}
-			
-			_initializeType = InitializeType.Vector;
-		}
+	    public float[] HiddenOffsets {
+	        get { return _hiddenOffsets; }
+	    }
 
 		public override void PrepareToNextPackage(int nextPackageSize) {
 			_packageFactor = 1f/nextPackageSize;
 			
-			Array.Clear(_visibleOffsetNewVector, 0, _visibleOffsetNewVector.Length);
-			Array.Clear(_hiddenOffsetNewVector, 0, _hiddenOffsetNewVector.Length);
+			Array.Clear(_visibleOffsetsNew, 0, _visibleOffsetsNew.Length);
+			Array.Clear(_hiddenOffsetsNew, 0, _hiddenOffsetsNew.Length);
 
 			Array.Clear(_dataVisibleHidden, 0 , _dataVisibleHidden.Length);
 			Array.Clear(_modelVisibleHidden, 0, _modelVisibleHidden.Length);
@@ -66,28 +56,27 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 
 		public override void StorePositivePhaseData(float[] visibleStates, float[] hiddenStates) {
 			for (var j = 0; j < HiddenStatesCount; j++) {
-				var startIndex = j*VisibleStatesCount;
 				var hiddenState = hiddenStates[j];
-			    var hiddenOffset = _hiddenOffsetVector[j];
+			    var shiftedHiddenState = hiddenState - _hiddenOffsets[j];
 				for (var i = 0; i < VisibleStatesCount; i++) {
-					_dataVisibleHidden[startIndex + i] += (visibleStates[i] - _visibleOffsetVector[i])*(hiddenState - hiddenOffset);
+					_dataVisibleHidden[j*VisibleStatesCount + i] += (visibleStates[i] - _visibleOffsets[i])*shiftedHiddenState;
 				}
 				_dataHidden[j] += hiddenState;
-				_hiddenOffsetNewVector[j] += _packageFactor*hiddenStates[j];
+				_hiddenOffsetsNew[j] += _packageFactor*hiddenStates[j];
 			}
 
 			for (var i = 0; i < VisibleStatesCount; i++) {
 				_dataVisible[i] += visibleStates[i];
-				_visibleOffsetNewVector[i] += _packageFactor*visibleStates[i];
+				_visibleOffsetsNew[i] += _packageFactor*visibleStates[i];
 			}
 		}
 
 		public override void StoreNegativePhaseData(float[] visibleStates, float[] hiddenStates) {
 			for (var j = 0; j < HiddenStatesCount; j++) {
-				var startIndex = j*VisibleStatesCount;
 				var hiddenState = hiddenStates[j];
+                var shiftedHiddenState = hiddenState - _hiddenOffsets[j];
 				for (var i = 0; i < VisibleStatesCount; i++) {
-					_modelVisibleHidden[startIndex + i] += visibleStates[i]*hiddenState;
+					_modelVisibleHidden[j*VisibleStatesCount + i] += (visibleStates[i] - _visibleOffsets[i])*shiftedHiddenState;
 				}
 				_modelHidden[j] += hiddenState;
 			}
@@ -103,7 +92,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 				for (var i = 0; i < VisibleStatesCount; i++) {
 					var index = j*VisibleStatesCount + i;
 					var weightGradient = packageFactor*(_dataVisibleHidden[index] - _modelVisibleHidden[index]);
-					hiddenStateSumGradient += _visibleOffsetVector[i]*weightGradient;
+					hiddenStateSumGradient += _visibleOffsets[i]*weightGradient;
 					Gradients.PackageDerivativeForWeights[index] = weightGradient;
 				}
 				Gradients.PackageDerivativeForHiddenBias[j] = packageFactor*(_dataHidden[j] - _modelHidden[j]) - 
@@ -113,20 +102,20 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			for (var i = 0; i < VisibleStatesCount; i++) {
 				var visibleStateSumGradient = 0f;
 				for (var j = 0; j < HiddenStatesCount; j++) {
-					visibleStateSumGradient += _hiddenOffsetVector[j]*Gradients.PackageDerivativeForWeights[j*VisibleStatesCount + i];
+					visibleStateSumGradient += _hiddenOffsets[j]*Gradients.PackageDerivativeForWeights[j*VisibleStatesCount + i];
 				}
 				Gradients.PackageDerivativeForVisibleBias[i] = packageFactor*(_dataVisible[i] - _modelVisible[i]) -
 				                                               visibleStateSumGradient;
 			}
 
 			for (var i = 0; i < VisibleStatesCount; i++) {
-				_visibleOffsetVector[i] = (1f - _slidingAverage)*_visibleOffsetVector[i] +
-				                          _slidingAverage*_visibleOffsetNewVector[i];
+				_visibleOffsets[i] = (1f - _slidingFactor)*_visibleOffsets[i] +
+				                          _slidingFactor*_visibleOffsetsNew[i];
 			}
 
 			for (var j = 0; j < HiddenStatesCount; j++) {
-			    _hiddenOffsetVector[j] = (1f - _slidingAverage)*_hiddenOffsetVector[j] +
-				                          _slidingAverage*_hiddenOffsetNewVector[j];
+			    _hiddenOffsets[j] = (1f - _slidingFactor)*_hiddenOffsets[j] +
+				                          _slidingFactor*_hiddenOffsetsNew[j];
 			}
 		}
 
@@ -140,18 +129,11 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			_dataHidden = new float[HiddenStatesCount];
 			_modelHidden = new float[HiddenStatesCount];
 
-			switch (_initializeType) {
-				case InitializeType.Constant:
-					_visibleOffsetVector = Enumerable.Repeat(_startVisibleOffsetScalar, VisibleStatesCount).ToArray();
-					_hiddenOffsetVector = Enumerable.Repeat(_startHiddenOffsetScalar, HiddenStatesCount).ToArray();
-					break;
-				case InitializeType.Vector:
-					_visibleOffsetVector = _visibleOffsetVector ?? Enumerable.Repeat(0.5f, VisibleStatesCount).ToArray();
-					_hiddenOffsetVector = _hiddenOffsetVector ?? Enumerable.Repeat(0.5f, HiddenStatesCount).ToArray();
-					break;
-			}
-			_visibleOffsetNewVector = Enumerable.Repeat(0f, VisibleStatesCount).ToArray();
-			_hiddenOffsetNewVector = Enumerable.Repeat(0f, HiddenStatesCount).ToArray();
+            _visibleOffsets = _visibleOffsets ?? Enumerable.Repeat(0.5f, VisibleStatesCount).ToArray();
+			_hiddenOffsets = _hiddenOffsets ?? Enumerable.Repeat(0.5f, HiddenStatesCount).ToArray();
+
+			_visibleOffsetsNew = Enumerable.Repeat(0f, VisibleStatesCount).ToArray();
+			_hiddenOffsetsNew = Enumerable.Repeat(0f, HiddenStatesCount).ToArray();
 		}
 	}
 }

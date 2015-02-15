@@ -28,8 +28,6 @@ namespace NeuralNetNative {
 			virtual void HiddenLayerCalculateActivity(const float *newVisibleState, const float *addedWeight, const float *addedHiddenBias) = 0;
 			virtual void VisibleLayerSampling(void);
 			virtual void HiddenLayerSampling(void);
-			virtual void VisibleLayerSampling(float *target);
-			virtual void HiddenLayerSampling(float *target);
 			void VisibleLayerCopyTo(float *target);
 			void HiddenLayerCopyTo(float *target);
 			void Predict(const float *input, float *output);
