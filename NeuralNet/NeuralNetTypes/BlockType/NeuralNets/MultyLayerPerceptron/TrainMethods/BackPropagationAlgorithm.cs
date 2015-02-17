@@ -265,7 +265,7 @@ namespace NeuralNet.MultyLayerPerceptron {
 						var oldDelta = _properties.Momentum*oldDeltaWeights[weightIndex];
 						var newDelta = curLearnSpeed*learnFactors[weightIndex]*partialDerivative + oldDelta;
 						oldDeltaWeights[weightIndex] = newDelta;
-						curLayerWeights[weightIndex] += newDelta + oldDelta;
+						curLayerWeights[weightIndex] += (1f + _properties.Momentum)*newDelta;
 					}
 
 					var lastDerivativeAverageForBias = derivativeAveragesForBias[i];
@@ -280,7 +280,7 @@ namespace NeuralNet.MultyLayerPerceptron {
 					var oldDeltaForBias = _properties.Momentum*oldDeltaWeightsForBias[i];
 					var newDeltaForBias = curLearnSpeed*partialDerivativeForBias + oldDeltaForBias;
 					oldDeltaWeightsForBias[i] = newDeltaForBias;
-					curLayerBias[i] += newDeltaForBias + oldDeltaForBias;
+					curLayerBias[i] += (1f + _properties.Momentum)*newDeltaForBias;
 				});
 			}
 		}

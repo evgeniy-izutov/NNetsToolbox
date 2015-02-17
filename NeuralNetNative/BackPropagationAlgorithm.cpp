@@ -297,7 +297,7 @@ namespace NeuralNetNative {
 							float oldDelta = _properties->Momentum*oldDeltaWeights[weightIndex];
 							float newDelta = curLearnSpeed*learnFactors[weightIndex]*partialDerivative + oldDelta;
 							oldDeltaWeights[weightIndex] = newDelta;
-							curLayerWeights[weightIndex] += newDelta + oldDelta;
+							curLayerWeights[weightIndex] += (1.0f + _properties->Momentum)*newDelta;
 						}
 
 						float lastDerivativeAverageForBias = derivativeAveragesForBias[i];
@@ -312,7 +312,7 @@ namespace NeuralNetNative {
 						float oldDeltaForBias = _properties->Momentum*oldDeltaWeightsForBias[i];
 						float newDeltaForBias = curLearnSpeed*learnFactorsForBias[i]*partialDerivativeForBias + oldDeltaForBias;
 						oldDeltaWeightsForBias[i] = newDeltaForBias;
-						curLayerBias[i] += newDeltaForBias + oldDeltaForBias;
+						curLayerBias[i] += (1.0f + _properties->Momentum)*newDeltaForBias;
 					}
 				});
 			}
