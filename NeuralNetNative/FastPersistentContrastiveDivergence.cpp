@@ -99,7 +99,6 @@ namespace NeuralNetNative {
         }
 
         void FastPersistentContrastiveDivergence::ModifyWeightsOfNeuronNet() {
-			float regularizationFactorPerPackage = 1.0f/packagesCount;
 			float curRegularLearnSpeed = properties->BaseLearnSpeed*properties->FactorStrategy->GetFactor(epochNumber);
 			float curFastLearnSpeed = properties->BaseLearnSpeed*properties->AddedFactorStrategy->GetFactor(epochNumber);
 			
@@ -117,7 +116,7 @@ namespace NeuralNetNative {
 						
 						float newDeltaRegularWeight = properties->Momentum*_oldDeltaRegularWeights[weightIndex] +
 						    curRegularLearnSpeed*(partialDerivative - 
-							regularizationFactorPerPackage*properties->Regularization->GetDerivative(regularWeights[weightIndex]));
+							properties->Regularization->GetDerivative(regularWeights[weightIndex]));
 						_oldDeltaRegularWeights[weightIndex] = newDeltaRegularWeight;
 						regularWeights[weightIndex] += (1.0f + properties->Momentum)*newDeltaRegularWeight;
 

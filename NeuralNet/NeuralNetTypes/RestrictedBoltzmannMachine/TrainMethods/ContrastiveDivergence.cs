@@ -92,7 +92,6 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 	    }
 
 		protected override void ModifyWeightsOfNeuronNet() {
-			var regularizationFactorPerPackage = 1f/packagesCount;
 			var curLearnSpeed = properties.BaseLearnSpeed*properties.LearnFactorStrategy.GetFactor(epochNumber);
 			var weights = neuralNet.Weights;
 			for (var j = 0; j < hiddenStatesCount; j++) {
@@ -101,7 +100,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 					
 					var lastDerivativeAverage = _derivativeAverages[weightIndex];
 					var partialDerivative = gradients.PackageDerivativeForWeights[weightIndex] - 
-						regularizationFactorPerPackage*properties.Regularization.GetDerivative(weights[weightIndex]);
+						properties.Regularization.GetDerivative(weights[weightIndex]);
 					gradients.PackageDerivativeForWeights[weightIndex] = 0.0f;
 					_learnFactors[weightIndex] = (lastDerivativeAverage*partialDerivative > 0.0f) ?
 						Math.Min(_learnFactors[weightIndex] + properties.SpeedBonus, properties.SpeedUpBorder):

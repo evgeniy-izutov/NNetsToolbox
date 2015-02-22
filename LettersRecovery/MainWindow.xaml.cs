@@ -195,8 +195,8 @@ namespace LettersRecovery {
 				AverageLearnFactor = 0.6f,
 
                 //Regularization = new NoRegularization()
-        		Regularization = new EliminationRegularization(0.001f, 1.3f)
-				//Regularization = new L2Regularization(0.01f)
+        		//Regularization = new EliminationRegularization(0.001f, 1.3f)
+				Regularization = new L2Regularization(0.01f)
         	};
 
             var gradientFunction = new CenteredGradient(0.5f,
@@ -205,7 +205,7 @@ namespace LettersRecovery {
             //var gradientFunction = new LinearGradient();
 
 	        //var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
-			var trainMethod = new NativeWrapper.FastPersistentContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 19f/20f);
+			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

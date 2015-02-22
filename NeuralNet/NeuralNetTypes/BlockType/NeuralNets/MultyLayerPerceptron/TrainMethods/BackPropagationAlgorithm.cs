@@ -246,7 +246,6 @@ namespace NeuralNet.MultyLayerPerceptron {
 				var derivativeAveragesForBias = _derivativeAveragesForBias[layerNum];
 				var prevLayerSize = _neuronNetLayersStruct[layerNum];
 				var curLearnSpeed = _properties.BaseLearnSpeed*_properties.LearnFactorStrategy.GetFactor(_epochNumber);
-				var regularizationFactorPerPackage = 1f/_packagesCount;
 
 				Parallel.For(0, curLayer.Size, i => {
 					for (var j = 0; j < prevLayerSize; j++) {
@@ -254,7 +253,7 @@ namespace NeuralNet.MultyLayerPerceptron {
 
 						var lastDerivativeAverage = derivativeAverages[weightIndex];
 						var partialDerivative = _packageFactor*packageDerivative[weightIndex] - 
-							regularizationFactorPerPackage*_properties.Regularization.GetDerivative(curLayerWeights[weightIndex]);
+							_properties.Regularization.GetDerivative(curLayerWeights[weightIndex]);
 						packageDerivative[weightIndex] = 0.0f;
 						learnFactors[weightIndex] = lastDerivativeAverage*partialDerivative > 0.0f ?
 							Math.Min(learnFactors[weightIndex] + _properties.SpeedBonus, _properties.SpeedUpBorder) :

@@ -107,7 +107,6 @@ namespace NeuralNetNative {
         }
 
 		void ContrastiveDivergence::ModifyWeightsOfNeuronNet() {
-			float regularizationFactorPerPackage = 1.0f/packagesCount;
             float curLearnSpeed = properties->BaseLearnSpeed*properties->FactorStrategy->GetFactor(epochNumber);
 			
             float *weights = neuralNet->GetWeights();
@@ -121,7 +120,7 @@ namespace NeuralNetNative {
 
 						float lastDerivativeAverage = _derivativeAverages[weightIndex];
 						float partialDerivative = packageDerivativeForWeights[weightIndex] - 
-							regularizationFactorPerPackage*properties->Regularization->GetDerivative(weights[weightIndex]);
+							properties->Regularization->GetDerivative(weights[weightIndex]);
 						packageDerivativeForWeights[weightIndex] = 0.0f;
 						_learnFactors[weightIndex] = (lastDerivativeAverage*partialDerivative > 0.0f) ?
 							fminf(_learnFactors[weightIndex] + properties->SpeedBonus, properties->SpeedUpBorder):
@@ -167,7 +166,7 @@ namespace NeuralNetNative {
 				for (int j = r.begin(); j < r.end(); j++) {
 					float lastDerivativeAverageForHiddenBias = _derivativeAveragesForHiddenBias[j];
 					float partialDerivativeForHiddenBias = packageDerivativeForHiddenBias[j] - 
-							regularizationFactorPerPackage*properties->Regularization->GetDerivative(hiddenStatesBias[j]);
+							properties->Regularization->GetDerivative(hiddenStatesBias[j]);
 					packageDerivativeForHiddenBias[j] = 0.0f;
 					_learnFactorsForHiddenBias[j] = (lastDerivativeAverageForHiddenBias*partialDerivativeForHiddenBias > 0.0f) ?
 						fminf(_learnFactorsForHiddenBias[j] + properties->SpeedBonus, properties->SpeedUpBorder):

@@ -275,7 +275,6 @@ namespace NeuralNetNative {
 				float *oldDeltaWeightsForBias = _oldDeltaWeightsForBias[layerNum];
 				float *derivativeAveragesForBias = _derivativeAveragesForBias[layerNum];
 				float curLearnSpeed = _properties->BaseLearnSpeed*_properties->FactorStrategy->GetFactor(_epochNumber);
-				float regularizationFactorPerPackage = 1.0f/_packagesCount;
 
 				parallel_for( blocked_range<size_t>(0, curLayerSize, BPAModifyWeightsGrainSize),
 				[=](const blocked_range<size_t>& r)
@@ -286,7 +285,7 @@ namespace NeuralNetNative {
 
 							float lastDerivativeAverage = derivativeAverages[weightIndex];
 							float partialDerivative = _packageFactor*packageDerivative[weightIndex] -
-								regularizationFactorPerPackage*_properties->Regularization->GetDerivative(curLayerWeights[weightIndex]);
+								_properties->Regularization->GetDerivative(curLayerWeights[weightIndex]);
 							packageDerivative[weightIndex] = 0.0f;
 							learnFactors[weightIndex] = (lastDerivativeAverage*partialDerivative > 0.0f) ?
 								fminf(learnFactors[weightIndex] + _properties->SpeedBonus, _properties->SpeedUpBorder): 

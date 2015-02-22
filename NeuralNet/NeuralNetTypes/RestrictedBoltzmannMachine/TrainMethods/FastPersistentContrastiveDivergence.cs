@@ -84,7 +84,6 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		}
 
 		protected override void ModifyWeightsOfNeuronNet() {
-			var regularizationFactorPerPackage = 1f/packagesCount;
 			var curRegularLearnSpeed = properties.BaseLearnSpeed*properties.LearnFactorStrategy.GetFactor(epochNumber);
 			var curFastLearnSpeed = properties.BaseLearnSpeed*properties.AddedLearnFactorStrategy.GetFactor(epochNumber);
 
@@ -99,7 +98,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 					
 					var newDeltaRegularWeight = curRegularLearnSpeed*(partialDerivative +
                         properties.Momentum*_oldDeltaRegularWeights[weightIndex] - 
-						regularizationFactorPerPackage*properties.Regularization.GetDerivative(regularWeights[weightIndex]));
+						properties.Regularization.GetDerivative(regularWeights[weightIndex]));
 					_oldDeltaRegularWeights[weightIndex] = newDeltaRegularWeight;
 					regularWeights[weightIndex] += (1f + properties.Momentum)*newDeltaRegularWeight;
 
