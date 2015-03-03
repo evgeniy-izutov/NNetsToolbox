@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using StandardTypes;
 
 namespace NeuralNet.MultyLayerPerceptron {
@@ -8,32 +9,39 @@ namespace NeuralNet.MultyLayerPerceptron {
 	public sealed class ImprovedBestActiveZone : IMlpWeightGenerator {
 		private readonly FillVectorFunction _fillVector;
 		private readonly Random _uniformGenerator;
-		private readonly List<TrainPair> _trainData;
+		private readonly List<float[]> _dataInputs;
 		private readonly float _uniformFactor;
 
-		public ImprovedBestActiveZone(Distribution distribution, List<TrainPair> trainData) {
+		public ImprovedBestActiveZone(Distribution distribution, IEnumerable<TrainPair> trainData) {
 			if (distribution == Distribution.Uniform) {
 				_fillVector = FillUniformVector;
 			}
 			else {
 				_fillVector = FillNormalVector;
 			}
-			_trainData = trainData;
+			_dataInputs = SelectInputs(trainData);
+			_uniformGenerator = new Random();
+			_uniformFactor = (float) Math.Sqrt(3.0);
+		}
+
+		public ImprovedBestActiveZone(Distribution distribution, List<float[]> inputs) {
+			if (distribution == Distribution.Uniform) {
+				_fillVector = FillUniformVector;
+			}
+			else {
+				_fillVector = FillNormalVector;
+			}
+			_dataInputs = inputs;
 			_uniformGenerator = new Random();
 			_uniformFactor = (float) Math.Sqrt(3.0);
 		}
 		
 		public void GenerateNewWeights(MultyLayerPerceptron perceptron) {
 			var layers = perceptron.Layers;
-			List<float[]> newData = null;
+			var newData = _dataInputs;
 
-			var dataMaxSqrSum = FindMaxSqrSum(_trainData);
-			FillLayer(layers[0], dataMaxSqrSum);
-			if (layers.Length > 1) {
-				newData = CalculateNewData(_trainData, layers[0]);
-			}
-			
-			for (var layerNum = 1; layerNum < layers.Length - 1; layerNum++) {
+			float dataMaxSqrSum;
+			for (var layerNum = 0; layerNum < layers.Length - 1; layerNum++) {
 				dataMaxSqrSum = FindMaxSqrSum(newData);
 				FillLayer(layers[layerNum], dataMaxSqrSum);
 				newData = CalculateNewData(newData, layers[layerNum]);
@@ -43,23 +51,11 @@ namespace NeuralNet.MultyLayerPerceptron {
 			FillLayer(layers[0], dataMaxSqrSum);
 		}
 
-		private static float FindMaxSqrSum(List<TrainPair> trainData) {
-			var maxSqrSum = 0f;
-			foreach (var example in trainData) {
-				var sqrSum = 0f;
-				var input = example.Input;
-				for (var i = 0; i < input.Length; i++) {
-					sqrSum += input[i]*input[i];
-				}
-
-				if (sqrSum > maxSqrSum) {
-					maxSqrSum = sqrSum;
-				}
-			}
-			return maxSqrSum;
+		private static List<float[]> SelectInputs(IEnumerable<TrainPair> data) {
+			return data.Select(example => example.Input).ToList();
 		}
 
-		private static float FindMaxSqrSum(List<float[]> data) {
+		private static float FindMaxSqrSum(IEnumerable<float[]> data) {
 			var maxSqrSum = 0f;
 			foreach (var input in data) {
 				var sqrSum = 0f;
@@ -122,30 +118,7 @@ namespace NeuralNet.MultyLayerPerceptron {
 			x2 = (float) (y*factor);
 		}
 
-		private List<float[]> CalculateNewData(List<TrainPair> data, BaseNeuralBlock layer) {
-			var result = new List<float[]>(data.Count);
-			
-			var weights = layer.GetWeights()[0];
-			var bias = layer.GetBias();
-			var prevLayerSize = weights.Length/layer.Size;
-			
-			foreach (var example in data) {
-				var input = example.Input;
-				var output = new float[layer.Size];
-				for (var i = 0; i < layer.Size; i++) {
-					var sum = bias[i];
-					for (var j = 0; j < prevLayerSize; j++) {
-						sum += input[j]*weights[i*prevLayerSize + j];
-					}
-					output[i] = sum;
-				}
-				result.Add(output);
-			}
-
-			return result;
-		} 
-
-		private List<float[]> CalculateNewData(List<float[]> data, BaseNeuralBlock layer) {
+		private static List<float[]> CalculateNewData(ICollection<float[]> data, BaseNeuralBlock layer) {
 			var result = new List<float[]>(data.Count);
 			
 			var weights = layer.GetWeights()[0];

@@ -278,19 +278,19 @@ namespace LettersClassification {
         private void TrainNeuralNet () {
         	_trainProperties = new TrainProperties {
         		Epsilon = 0.0001f,
-        		MaxIterationCount = 8,
+        		MaxIterationCount = 25,
 				CvLimit = 0.01f,
         		Metrics = new CrossEntropyForSoftmax(),
-        		PackageSize = 100,
+        		PackageSize = 50,
 				BaseLearnSpeed = 0.01f,
 				SpeedBonus = 0.001f,
 				SpeedPenalty = 0.999f,
 				SpeedUpBorder = float.MaxValue,
 				SpeedLowBorder = float.MinValue,
 				LearnFactorStrategy = new ReverseFactor(),
-				AverageLearnFactor = 0.9f,
+				AverageLearnFactor = 0.7f,
 				Momentum = 0.99f,
-        		Regularization = new EliminationRegularization(0.001f, 1.0f)
+        		Regularization = new EliminationRegularization(0.001f, 1.2f)
 				//Regularization = new L2Regularization(0.00001f)
 				//Regularization = new NoRegularization()
         	};
