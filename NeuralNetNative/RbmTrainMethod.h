@@ -47,6 +47,9 @@ namespace NeuralNetNative {
 		    virtual void RestoreVisibleStates(int packageId) = 0;
             virtual void ModifyWeightsOfNeuronNet() = 0;
         private:
+            bool IsTestDataAvailable() const;
+            void RunTraingWithTesting(void);
+            void RunTraingWithoutTesting(void);
             int CalculatePackagesCount(void) const;
             float TestModel(StandardTypesNative::TrainSingle **data, int dataSize) const;
             void TrainEpoch(void);

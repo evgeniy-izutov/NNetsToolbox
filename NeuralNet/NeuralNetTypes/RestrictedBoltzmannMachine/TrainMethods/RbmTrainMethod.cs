@@ -52,27 +52,12 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		}
 
 		protected override void RunIterativeProcess() {
-			var trainErrorValue = properties.Epsilon + 1.0f;
-			var testErrorValue = float.NaN;
-			var minTestErrorValue = float.MaxValue;
-			epochNumber = 1;
-			while ((ProcessSate == IterativeProcessState.InProgress) && 
-				(trainErrorValue > properties.Epsilon) && 
-				(epochNumber <= properties.MaxIterationCount) && 
-				(float.IsNaN(testErrorValue) || Math.Abs(testErrorValue - minTestErrorValue) < properties.CvLimit)) {
-				
-				TrainEpoch();
-
-				trainErrorValue =  TestModel(_trainDataIterator.Collection);
-			    testErrorValue = TestModel(_testData);
-				if (!float.IsNaN(testErrorValue) && (testErrorValue < minTestErrorValue)) {
-					minTestErrorValue = testErrorValue;
-				}
-
-                OnIterationCompleted(new IterationCompletedEventArgs(epochNumber, trainErrorValue, testErrorValue));
-				epochNumber++;
+			if (IsTestDataAvailable()) {
+	            RunTraingWithTesting();
+	        }
+			else {
+				RunTraingWithoutTesting();
 			}
-			OnIterativeProcessFinished(new IterativeProcessFinishedEventArgs(epochNumber));
 		}
 
 		protected override void ApplyResults() {
@@ -89,6 +74,55 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 
 		protected abstract void ClearReference();
 
+		private bool IsTestDataAvailable() {
+			return !(_testData == null || _testData.Count == 0);
+		}
+
+		private void RunTraingWithTesting() {
+			var trainError = TestModel(_trainDataIterator.Collection);
+			var slidingTestError = TestModel(_testData);
+			var minTestError = slidingTestError;
+			epochNumber = 1;
+			while ((ProcessSate == IterativeProcessState.InProgress) &&
+				   (trainError > properties.Epsilon) &&
+				   (epochNumber <= properties.MaxIterationCount) &&
+				   ((epochNumber <= properties.SkipCvLimitFirstIterations) ||
+				    (Math.Abs(slidingTestError - minTestError) < properties.CvLimit))) {
+				
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator.Collection);
+			    var testError = TestModel(_testData);
+				slidingTestError = properties.CvSlidingFactor*testError +
+					(1f - properties.CvSlidingFactor)*slidingTestError;
+				
+				if (testError < minTestError) {
+					minTestError = testError;
+				}
+
+                OnIterationCompleted(new IterationCompletedEventArgs(epochNumber, trainError, testError));
+				epochNumber++;
+			}
+			OnIterativeProcessFinished(new IterativeProcessFinishedEventArgs(epochNumber));
+		}
+
+		private void RunTraingWithoutTesting() {
+			var trainError = TestModel(_trainDataIterator.Collection);
+			epochNumber = 1;
+			while ((ProcessSate == IterativeProcessState.InProgress) && 
+				   (trainError > properties.Epsilon) && 
+				   (epochNumber <= properties.MaxIterationCount)) {
+				
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator.Collection);
+
+                OnIterationCompleted(new IterationCompletedEventArgs(epochNumber, trainError, float.NaN));
+				epochNumber++;
+			}
+			OnIterativeProcessFinished(new IterativeProcessFinishedEventArgs(epochNumber));
+		}
+
 		private int CalculatePackagesCount() {
 			var count = _trainDataIterator.Size()/properties.PackageSize;
 			if (_trainDataIterator.Size()%properties.PackageSize != 0) {
@@ -98,10 +132,6 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		}
 
 		private float TestModel(IList<TrainSingle> data) {
-            if (data == null || data.Count == 0) {
-	            return float.NaN;
-	        }
-
 			var sumError = 0.0f;
 			for (var i = 0; i < data.Count; i++) {
 				var testExample = data[i];

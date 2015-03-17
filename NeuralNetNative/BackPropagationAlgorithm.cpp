@@ -123,27 +123,12 @@ namespace NeuralNetNative {
 		}
 
 		void BackPropagationAlgorithm::RunIterativeProcess() {
-			float trainErrorValue = _properties->Epsilon + 1.0f;
-			float testErrorValue = std::numeric_limits<float>::quiet_NaN();
-			float minTestErrorValue = FLT_MAX;
-			_epochNumber = 1;
-			while ((ProcessSate == IterativeProcessState::InProgress) && 
-				(trainErrorValue > _properties->Epsilon) && 
-				(_epochNumber <= _properties->MaxIterationCount) &&
-				(isnanf(testErrorValue) || fabsf(testErrorValue - minTestErrorValue) < _properties->CvLimit)) {
-
-				TrainEpoch();
-
-				trainErrorValue = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
-				testErrorValue = TestModel(_testData, _testDataSize);
-				if (!isnanf(testErrorValue) && (testErrorValue < minTestErrorValue)) {
-					minTestErrorValue = testErrorValue;
-				}
-
-				OnIterationCompleted(_epochNumber, trainErrorValue, testErrorValue);
-				_epochNumber++;
+			if (IsTestDataAvailable()) {
+	            RunTraingWithTesting();
+	        }
+			else {
+				RunTraingWithoutTesting();
 			}
-			OnIterativeProcessFinished(_epochNumber);
 		}
 
 		void BackPropagationAlgorithm::ApplyResults(void) {
@@ -183,20 +168,64 @@ namespace NeuralNetNative {
 			}
 		}
 
-		float BackPropagationAlgorithm::TestModel(StandardTypesNative::TrainPair **data, int dataSize) {
-			if (data == 0 || dataSize == 0) {
-				return std::numeric_limits<float>::quiet_NaN();
-			}
-			else {
-				float sumError = 0.0f;
-				for (int i = 0; i < dataSize; i++) {
-					TrainPair *trainPair = data[i];
-					_neuronNetInput = trainPair->Input();
-					_neuralNet->Predict(_neuronNetInput, _neuronNetOutput);
-					sumError += _properties->Metrics->Calculate(trainPair->Output(), _neuronNetOutput, _outputSize);
+        bool BackPropagationAlgorithm::IsTestDataAvailable() const {
+            return !(_testData == 0 || _testDataSize == 0);
+        }
+
+        void BackPropagationAlgorithm::RunTraingWithTesting(void) {
+            float trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+			float slidingTestError = TestModel(_testData, _testDataSize);
+			float minTestError = slidingTestError;
+			_epochNumber = 1;
+			while ((ProcessSate == StandardTypesNative::IterativeProcessState::InProgress) && 
+				(trainError > _properties->Epsilon) && 
+				(_epochNumber <= _properties->MaxIterationCount) &&
+				((_epochNumber <= _properties->SkipCvLimitFirstIterations) ||
+                 (fabsf(slidingTestError - minTestError) < _properties->CvLimit))) {
+
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+				float testError = TestModel(_testData, _testDataSize);
+                slidingTestError = _properties->CvSlidingFactor*testError +
+					(1.0f - _properties->CvSlidingFactor)*slidingTestError;
+
+				if (testError < minTestError) {
+					minTestError = testError;
 				}
-				return sumError/dataSize;
+
+				OnIterationCompleted(_epochNumber, trainError, testError);
+				_epochNumber++;
 			}
+			OnIterativeProcessFinished(_epochNumber);
+        }
+
+        void BackPropagationAlgorithm::RunTraingWithoutTesting(void) {
+            float trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+			_epochNumber = 1;
+			while ((ProcessSate == StandardTypesNative::IterativeProcessState::InProgress) && 
+				   (trainError > _properties->Epsilon) && 
+				   (_epochNumber <= _properties->MaxIterationCount)) {
+
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+
+				OnIterationCompleted(_epochNumber, trainError, std::numeric_limits<float>::quiet_NaN());
+				_epochNumber++;
+			}
+			OnIterativeProcessFinished(_epochNumber);
+        }
+
+		float BackPropagationAlgorithm::TestModel(StandardTypesNative::TrainPair **data, int dataSize) {
+			float sumError = 0.0f;
+			for (int i = 0; i < dataSize; i++) {
+				TrainPair *trainPair = data[i];
+				_neuronNetInput = trainPair->Input();
+				_neuralNet->Predict(_neuronNetInput, _neuronNetOutput);
+				sumError += _properties->Metrics->Calculate(trainPair->Output(), _neuronNetOutput, _outputSize);
+			}
+			return sumError/dataSize;
 		}
 
 		void BackPropagationAlgorithm::TrainEpoch(void) {

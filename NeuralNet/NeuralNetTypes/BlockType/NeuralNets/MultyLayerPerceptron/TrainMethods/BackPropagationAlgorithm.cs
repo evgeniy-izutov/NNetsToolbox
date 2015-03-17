@@ -107,27 +107,12 @@ namespace NeuralNet.MultyLayerPerceptron {
 		}
 
 		protected override void RunIterativeProcess() {
-			var trainErrorValue = _properties.Epsilon + 1.0f;
-			var testErrorValue = float.NaN;
-			var minTestErrorValue = float.MaxValue;
-			_epochNumber = 1;
-			while ((ProcessSate == IterativeProcessState.InProgress) && 
-				(trainErrorValue > _properties.Epsilon) && 
-				(_epochNumber <= _properties.MaxIterationCount) && 
-				(float.IsNaN(testErrorValue) || Math.Abs(testErrorValue - minTestErrorValue) < _properties.CvLimit)) {
-				
-				TrainEpoch();
-
-				trainErrorValue = TestModel(_trainDataIterator.Collection);
-			    testErrorValue = TestModel(_testData);
-				if (!float.IsNaN(testErrorValue) && (testErrorValue < minTestErrorValue)) {
-					minTestErrorValue = testErrorValue;
-				}
-
-                OnIterationCompleted(new IterationCompletedEventArgs(_epochNumber, trainErrorValue, testErrorValue));
-				_epochNumber++;
+			if (IsTestDataAvailable()) {
+	            RunTraingWithTesting();
+	        }
+			else {
+				RunTraingWithoutTesting();
 			}
-			OnIterativeProcessFinished(new IterativeProcessFinishedEventArgs(_epochNumber));
 		}
 
 		protected override void ApplyResults() {
@@ -155,6 +140,55 @@ namespace NeuralNet.MultyLayerPerceptron {
 			_learnFactorsForBias = null;
 		}
 
+		private bool IsTestDataAvailable() {
+			return !(_testData == null || _testData.Count == 0);
+		}
+
+		private void RunTraingWithTesting() {
+			var trainError = TestModel(_trainDataIterator.Collection);
+			var slidingTestError = TestModel(_testData);
+			var minTestError = slidingTestError;
+			_epochNumber = 1;
+			while ((ProcessSate == IterativeProcessState.InProgress) &&
+				   (trainError > _properties.Epsilon) &&
+				   (_epochNumber <= _properties.MaxIterationCount) &&
+				   ((_epochNumber <= _properties.SkipCvLimitFirstIterations) ||
+				    (Math.Abs(slidingTestError - minTestError) < _properties.CvLimit))) {
+				
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator.Collection);
+			    var testError = TestModel(_testData);
+				slidingTestError = _properties.CvSlidingFactor*testError +
+					(1f - _properties.CvSlidingFactor)*slidingTestError;
+				
+				if (testError < minTestError) {
+					minTestError = testError;
+				}
+
+                OnIterationCompleted(new IterationCompletedEventArgs(_epochNumber, trainError, testError));
+				_epochNumber++;
+			}
+			OnIterativeProcessFinished(new IterativeProcessFinishedEventArgs(_epochNumber));
+		}
+
+		private void RunTraingWithoutTesting() {
+			var trainError = TestModel(_trainDataIterator.Collection);
+			_epochNumber = 1;
+			while ((ProcessSate == IterativeProcessState.InProgress) && 
+				   (trainError > _properties.Epsilon) && 
+				   (_epochNumber <= _properties.MaxIterationCount)) {
+				
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator.Collection);
+
+                OnIterationCompleted(new IterationCompletedEventArgs(_epochNumber, trainError, float.NaN));
+				_epochNumber++;
+			}
+			OnIterativeProcessFinished(new IterativeProcessFinishedEventArgs(_epochNumber));
+		}
+
 		private int CalculatePackagesCount() {
 			var packagesCount = _trainDataIterator.Size()/_properties.PackageSize;
 			if (_trainDataIterator.Size()%_properties.PackageSize != 0) {
@@ -164,19 +198,14 @@ namespace NeuralNet.MultyLayerPerceptron {
 		}
 
 	    private float TestModel(IList<TrainPair> data) {
-            if (data == null || data.Count == 0) {
-	            return float.NaN;
-	        }
-	        else {
-                var sumError = 0.0f;
-                for (var i = 0; i < data.Count; i++) {
-                    var testPair = data[i];
-                    _neuronNetInput = testPair.Input;
-                    _neuralNet.Predict(_neuronNetInput, _neuronNetOutput);
-                    sumError += _properties.Metrics.Calculate(testPair.Output, _neuronNetOutput);
-                }
-                return sumError / data.Count;
-	        }
+		    var sumError = 0.0f;
+		    for (var i = 0; i < data.Count; i++) {
+			    var testPair = data[i];
+			    _neuronNetInput = testPair.Input;
+			    _neuralNet.Predict(_neuronNetInput, _neuronNetOutput);
+			    sumError += _properties.Metrics.Calculate(testPair.Output, _neuronNetOutput);
+		    }
+		    return sumError / data.Count;
 	    }
 
 		private void TrainEpoch() {

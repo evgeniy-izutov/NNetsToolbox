@@ -48,6 +48,9 @@ namespace NeuralNetNative {
 			virtual TrainProperties* Properties(void) const;
 		private:
 			void AllocateMemory(void);
+            bool IsTestDataAvailable() const;
+            void RunTraingWithTesting(void);
+            void RunTraingWithoutTesting(void);
 			int CalculatePackagesCount(void);
 			int FindMaxSize(void);
 			virtual void RunIterativeProcess(void);

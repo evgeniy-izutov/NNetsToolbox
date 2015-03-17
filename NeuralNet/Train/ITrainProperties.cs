@@ -6,6 +6,8 @@ namespace NeuralNet {
 		Regularization Regularization { get; set; }
 		float Epsilon { get; set; }
 		float CvLimit { get; set; }
+		int SkipCvLimitFirstIterations { get; set; }
+		float CvSlidingFactor { get; set; }
 		int MaxIterationCount { get; set; }
 		int PackageSize { get; set; }
 		float BaseLearnSpeed { get; set; }

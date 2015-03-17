@@ -13,6 +13,8 @@ namespace NeuralNetNative {
 		int MaxIterationCount;
 		int PackageSize;
 		float CvLimit;
+        int SkipCvLimitFirstIterations;
+        float CvSlidingFactor;
 		float BaseLearnSpeed;
 		float SpeedBonus;
 		float SpeedPenalty;

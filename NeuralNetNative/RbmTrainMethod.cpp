@@ -43,27 +43,12 @@ namespace NeuralNetNative {
         }
 
         void RbmTrainMethod::RunIterativeProcess(void) {
-            float trainErrorValue = properties->Epsilon + 1.0f;
-			float testErrorValue = std::numeric_limits<float>::quiet_NaN();
-			float minTestErrorValue = FLT_MAX;
-			epochNumber = 1;
-			while ((ProcessSate == StandardTypesNative::IterativeProcessState::InProgress) && 
-				(trainErrorValue > properties->Epsilon) && 
-				(epochNumber <= properties->MaxIterationCount) &&
-				(isnanf(testErrorValue) || fabsf(testErrorValue - minTestErrorValue) < properties->CvLimit)) {
-
-				TrainEpoch();
-
-				trainErrorValue = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
-				testErrorValue = TestModel(_testData, _testDataSize);
-				if (!isnanf(testErrorValue) && (testErrorValue < minTestErrorValue)) {
-					minTestErrorValue = testErrorValue;
-				}
-
-				OnIterationCompleted(epochNumber, trainErrorValue, testErrorValue);
-				epochNumber++;
+            if (IsTestDataAvailable()) {
+	            RunTraingWithTesting();
+	        }
+			else {
+				RunTraingWithoutTesting();
 			}
-			OnIterativeProcessFinished(epochNumber);
         }
 
         void RbmTrainMethod::ApplyResults(void) {
@@ -77,6 +62,55 @@ namespace NeuralNetNative {
 			}
         }
 
+        bool RbmTrainMethod::IsTestDataAvailable() const {
+            return !(_testData == 0 || _testDataSize == 0);
+        }
+
+        void RbmTrainMethod::RunTraingWithTesting(void) {
+            float trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+			float slidingTestError = TestModel(_testData, _testDataSize);
+			float minTestError = slidingTestError;
+			epochNumber = 1;
+			while ((ProcessSate == StandardTypesNative::IterativeProcessState::InProgress) && 
+				(trainError > properties->Epsilon) && 
+				(epochNumber <= properties->MaxIterationCount) &&
+				((epochNumber <= properties->SkipCvLimitFirstIterations) ||
+                 (fabsf(slidingTestError - minTestError) < properties->CvLimit))) {
+
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+				float testError = TestModel(_testData, _testDataSize);
+                slidingTestError = properties->CvSlidingFactor*testError +
+					(1.0f - properties->CvSlidingFactor)*slidingTestError;
+
+				if (testError < minTestError) {
+					minTestError = testError;
+				}
+
+				OnIterationCompleted(epochNumber, trainError, testError);
+				epochNumber++;
+			}
+			OnIterativeProcessFinished(epochNumber);
+        }
+
+        void RbmTrainMethod::RunTraingWithoutTesting(void) {
+            float trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+			epochNumber = 1;
+			while ((ProcessSate == StandardTypesNative::IterativeProcessState::InProgress) && 
+				   (trainError > properties->Epsilon) && 
+				   (epochNumber <= properties->MaxIterationCount)) {
+
+				TrainEpoch();
+
+				trainError = TestModel(_trainDataIterator->Collection(), _trainDataIterator->Size());
+
+				OnIterationCompleted(epochNumber, trainError, std::numeric_limits<float>::quiet_NaN());
+				epochNumber++;
+			}
+			OnIterativeProcessFinished(epochNumber);
+        }
+
         int RbmTrainMethod::CalculatePackagesCount(void) const {
             int count = _trainDataIterator->Size()/properties->PackageSize;
 			if (_trainDataIterator->Size()%properties->PackageSize != 0) {
@@ -86,18 +120,13 @@ namespace NeuralNetNative {
         }
 
         float RbmTrainMethod::TestModel(StandardTypesNative::TrainSingle **data, int dataSize) const {
-            if (data == 0 || dataSize == 0) {
-	            return std::numeric_limits<float>::quiet_NaN();
-	        }
-	        else {
-                float sumError = 0.0f;
-                for (int i = 0; i < dataSize; i++) {
-                    StandardTypesNative::TrainSingle *testExample = data[i];
-                    neuralNet->Predict(testExample->Input(), _neuronNetOutput);
-                    sumError += properties->Metrics->Calculate(testExample->Input(), _neuronNetOutput, visibleStatesCount);
-                }
-                return sumError / dataSize;
-	        }
+            float sumError = 0.0f;
+            for (int i = 0; i < dataSize; i++) {
+                StandardTypesNative::TrainSingle *testExample = data[i];
+                neuralNet->Predict(testExample->Input(), _neuronNetOutput);
+                sumError += properties->Metrics->Calculate(testExample->Input(), _neuronNetOutput, visibleStatesCount);
+            }
+            return sumError / dataSize;
         }
 
         void RbmTrainMethod::TrainEpoch(void) {

@@ -35,6 +35,8 @@ namespace NeuralNetNativeWrapper {
 		_nativeTrainProperties->MaxIterationCount = trainProperties->MaxIterationCount;
 		_nativeTrainProperties->PackageSize = trainProperties->PackageSize;
 		_nativeTrainProperties->CvLimit = trainProperties->CvLimit;
+        _nativeTrainProperties->SkipCvLimitFirstIterations = trainProperties->SkipCvLimitFirstIterations;
+        _nativeTrainProperties->CvSlidingFactor = trainProperties->CvSlidingFactor;
 		_nativeTrainProperties->BaseLearnSpeed = trainProperties->BaseLearnSpeed;
 		_nativeTrainProperties->SpeedBonus = trainProperties->SpeedBonus;
 		_nativeTrainProperties->SpeedPenalty = trainProperties->SpeedPenalty;

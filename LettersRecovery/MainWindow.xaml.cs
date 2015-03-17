@@ -30,7 +30,7 @@ namespace LettersRecovery {
     	private const int ImageSize = 28;
         private const float TrueValue = 1.0f;
         private const float FalseValue = 0.0f;
-        private const int HiddenStatesCount = 100;
+        private const int HiddenStatesCount = 25;
 	    private const int VisibleStatesCount = ImageSize*ImageSize;
 	    private RestrictedBoltzmannMachine _neuralNet;
         private float[] _neuralNetOutput;
@@ -181,6 +181,8 @@ namespace LettersRecovery {
         		Metrics = new HammingDistance(),
         		PackageSize = 20,
 				CvLimit = 10.0f,
+				SkipCvLimitFirstIterations = 10,
+				CvSlidingFactor = 0.5f,
 				BaseLearnSpeed = 0.001f,
 				Momentum = 0.94f,
 				LearnFactorStrategy = new LinearFactor(1f, 1f/30f, iterationCount),
