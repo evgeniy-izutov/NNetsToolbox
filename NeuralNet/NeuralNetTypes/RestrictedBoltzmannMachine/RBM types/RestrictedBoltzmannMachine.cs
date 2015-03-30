@@ -12,6 +12,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		protected float[] visibleStatesBias;
 		protected float[] hiddenStatesBias;
 
+		protected RestrictedBoltzmannMachine() {
+			uniformGenerator = new Random();
+		}
+
 		protected RestrictedBoltzmannMachine(int visibleStatesCount, int hiddenStatesCount) {
 			uniformGenerator = new Random();
 			visibleStates = new float[visibleStatesCount];
@@ -74,7 +78,15 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			HiddenLayerSampling();
 			VisibleLayerCalculateActivity();
 			VisibleLayerSampling();
-			CopyVector(visibleStates, output);
+			visibleStates.CopyTo(output, 0);
+		}
+
+		public float[] Predict(float[] input) {
+			HiddenLayerCalculateActivity(input);
+			HiddenLayerSampling();
+			VisibleLayerCalculateActivity();
+			VisibleLayerSampling();
+			return (float[]) visibleStates.Clone();
 		}
 
 		public byte[] SaveState() {
@@ -110,7 +122,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			if (isSamplingOutput) {
 				VisibleLayerSampling();
 			}
-			CopyVector(visibleStates, output);
+			visibleStates.CopyTo(output, 0);
 		}
 
         public void CalculateHiddenStates(float[] input, float[] output, bool isSamplingOutput){
@@ -118,7 +130,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			if (isSamplingOutput) {
 		        HiddenLayerSampling();
 	        }
-			CopyVector(hiddenStates, output);
+			hiddenStates.CopyTo(output, 0);
 	    }
 
 		public float[] Weights {
@@ -140,11 +152,5 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		public float[] HiddenStates {
 			get { return hiddenStates; }
 		}
-
-		private static void CopyVector(float[] source, float[] target) {
-            for (var i = 0; i < source.Length; i++) {
-                target[i] = source[i];
-            }
-        }
 	}
 }

@@ -2,6 +2,9 @@
 
 namespace NeuralNet.RestrictedBoltzmannMachine {
 	public sealed class BinaryBinaryRbm : RestrictedBoltzmannMachine {
+		public BinaryBinaryRbm() : base() {
+		}
+		
 		public BinaryBinaryRbm(int visibleStatesCount, int hiddenStatesCount) : base(visibleStatesCount, hiddenStatesCount) {
 		}
 		

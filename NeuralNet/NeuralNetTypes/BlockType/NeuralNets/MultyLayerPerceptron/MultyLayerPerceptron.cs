@@ -27,8 +27,14 @@ namespace NeuralNet.MultyLayerPerceptron {
         public void Predict(float[] input, float[] output) {
             CalculateFirstLayer(input);
             CalculateLeftoverLayers();
-            SetOutput(output);
+            CopyOutput(output);
         }
+
+	    public float[] Predict(float[] input) {
+		    CalculateFirstLayer(input);
+            CalculateLeftoverLayers();
+		    return GetOutput();
+	    }
 
 	    public byte[] SaveState() {
 		    byte[] bytes;
@@ -73,11 +79,16 @@ namespace NeuralNet.MultyLayerPerceptron {
             }
         }
 
-        private void SetOutput(float[] output) {
+        private void CopyOutput(float[] copyOutput) {
             var neuronNetOutput = _layers[_lastLayerNum].GetState();
-            for (var i = 0; i < output.Length; i++) {
-                output[i] = neuronNetOutput[i];
-            }
+            neuronNetOutput.CopyTo(copyOutput, 0);
         }
+
+	    private float[] GetOutput() {
+		    var neuronNetOutput = _layers[_lastLayerNum].GetState();
+			var copyOutput = new float[neuronNetOutput.Length];
+			neuronNetOutput.CopyTo(copyOutput, 0);
+		    return copyOutput;
+	    }
     }
 }

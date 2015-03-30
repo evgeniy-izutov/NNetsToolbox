@@ -4,10 +4,17 @@ using MathNet.Numerics.Distributions;
 namespace NeuralNet.RestrictedBoltzmannMachine {
 	public sealed class BinaryNreluRbm : RestrictedBoltzmannMachine {
 		private readonly Normal _normalGenerator;
+
+		public BinaryNreluRbm() : base() {
+			_normalGenerator = new Normal {
+				RandomSource = new Random()
+			};
+		}
 		
 		public BinaryNreluRbm(int visibleStatesCount, int hiddenStatesCount) : base(visibleStatesCount, hiddenStatesCount) {
-			_normalGenerator = new Normal();
-			_normalGenerator.RandomSource = new Random();
+			_normalGenerator = new Normal {
+				RandomSource = new Random()
+			};
 		}
 		
 		public override void VisibleLayerCalculateActivity() {
