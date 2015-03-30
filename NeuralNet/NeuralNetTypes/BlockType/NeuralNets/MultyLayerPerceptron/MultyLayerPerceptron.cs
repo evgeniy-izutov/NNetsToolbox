@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NeuralNet.MultyLayerPerceptron {
@@ -29,20 +30,23 @@ namespace NeuralNet.MultyLayerPerceptron {
             SetOutput(output);
         }
 
-        public void Save(string outputPath) {
-            var outputStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-            var serializer = new BinaryFormatter();
-            serializer.Serialize(outputStream, _layers);
-            outputStream.Close();
-        }
+	    public byte[] SaveState() {
+		    byte[] bytes;
+            IFormatter formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream()) {
+                formatter.Serialize(stream, _layers);
+                bytes = stream.ToArray();
+            }
+            return bytes;
+	    }
 
-        public void Load(string inputPath) {
-            var inputStream = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var deserializer = new BinaryFormatter();
-            _layers = (BaseNeuralBlock[]) deserializer.Deserialize(inputStream);
-            _lastLayerNum = _layers.Length - 1;
-            inputStream.Close();
-        }
+	    public void LoadState(byte[] state) {
+		    IFormatter formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream(state)) {
+				_layers = (BaseNeuralBlock[]) formatter.Deserialize(stream);
+				_lastLayerNum = _layers.Length - 1;
+            }
+	    }
 
         public BaseNeuralBlock[] Layers {
             get { return _layers; }

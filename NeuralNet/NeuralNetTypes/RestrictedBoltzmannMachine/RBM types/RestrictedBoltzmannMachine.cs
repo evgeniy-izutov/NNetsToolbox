@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NeuralNet.RestrictedBoltzmannMachine {
@@ -76,6 +77,32 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			CopyVector(visibleStates, output);
 		}
 
+		public byte[] SaveState() {
+			byte[] bytes;
+            IFormatter formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream()) {
+                formatter.Serialize(stream, visibleStates);
+			    formatter.Serialize(stream, hiddenStates);
+			    formatter.Serialize(stream, weights);
+			    formatter.Serialize(stream, visibleStatesBias);
+			    formatter.Serialize(stream, hiddenStatesBias);
+				
+                bytes = stream.ToArray();
+            }
+            return bytes;
+		}
+
+		public void LoadState(byte[] state) {
+			IFormatter formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream(state)) {			
+				visibleStates = (float[]) formatter.Deserialize(stream);
+			    hiddenStates = (float[]) formatter.Deserialize(stream);
+			    weights = (float[]) formatter.Deserialize(stream);
+			    visibleStatesBias = (float[]) formatter.Deserialize(stream);
+			    hiddenStatesBias = (float[]) formatter.Deserialize(stream);
+            }
+		}
+
 		public void Predict(float[] input, float[] output, bool isSamplingOutput) {
 			HiddenLayerCalculateActivity(input);
 			HiddenLayerSampling();
@@ -93,28 +120,6 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 	        }
 			CopyVector(hiddenStates, output);
 	    }
-
-		public void Save(string outputPath) {
-			var outputStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-			var serializer = new BinaryFormatter();
-			serializer.Serialize(outputStream, visibleStates);
-			serializer.Serialize(outputStream, hiddenStates);
-			serializer.Serialize(outputStream, weights);
-			serializer.Serialize(outputStream, visibleStatesBias);
-			serializer.Serialize(outputStream, hiddenStatesBias);
-			outputStream.Close();
-		}
-
-		public void Load(string inputPath) {
-			var inputStream = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-			var deserializer = new BinaryFormatter();
-			visibleStates = (float[]) deserializer.Deserialize(inputStream);
-			hiddenStates = (float[]) deserializer.Deserialize(inputStream);
-			weights = (float[]) deserializer.Deserialize(inputStream);
-			visibleStatesBias = (float[]) deserializer.Deserialize(inputStream);
-			hiddenStatesBias = (float[]) deserializer.Deserialize(inputStream);
-			inputStream.Close();
-		}
 
 		public float[] Weights {
 			get { return weights; }
