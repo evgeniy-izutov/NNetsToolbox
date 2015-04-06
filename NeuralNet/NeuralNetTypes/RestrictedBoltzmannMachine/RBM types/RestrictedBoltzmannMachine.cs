@@ -62,23 +62,15 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		}
 
 		public void CopyVisibleLayerTo(float[] target) {
-			for (var i = 0; i < visibleStates.Length; i++) {
-				target[i] = visibleStates[i];
-			}
+			visibleStates.CopyTo(target, 0);
 		}
 
 		public void CopyHiddenLayerTo(float[] target) {
-			for (var i = 0; i < hiddenStates.Length; i++) {
-				target[i] = hiddenStates[i];
-			}
+			hiddenStates.CopyTo(target, 0);
 		}
-		
+
 		public void Predict(float[] input, float[] output) {
-			HiddenLayerCalculateActivity(input);
-			HiddenLayerSampling();
-			VisibleLayerCalculateActivity();
-			VisibleLayerSampling();
-			visibleStates.CopyTo(output, 0);
+			Predict(input, output, true);
 		}
 
 		public float[] Predict(float[] input) {
@@ -88,6 +80,24 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			VisibleLayerSampling();
 			return (float[]) visibleStates.Clone();
 		}
+
+		public void Predict(float[] input, float[] output, bool isSamplingOutput) {
+			HiddenLayerCalculateActivity(input);
+			HiddenLayerSampling();
+			VisibleLayerCalculateActivity();
+			if (isSamplingOutput) {
+				VisibleLayerSampling();
+			}
+			visibleStates.CopyTo(output, 0);
+		}
+
+		public void CalculateHiddenStates(float[] input, float[] output, bool isSamplingOutput) {
+            HiddenLayerCalculateActivity(input);
+			if (isSamplingOutput) {
+		        HiddenLayerSampling();
+	        }
+			hiddenStates.CopyTo(output, 0);
+	    }
 
 		public byte[] SaveState() {
 			byte[] bytes;
@@ -114,24 +124,6 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			    hiddenStatesBias = (float[]) formatter.Deserialize(stream);
             }
 		}
-
-		public void Predict(float[] input, float[] output, bool isSamplingOutput) {
-			HiddenLayerCalculateActivity(input);
-			HiddenLayerSampling();
-			VisibleLayerCalculateActivity();
-			if (isSamplingOutput) {
-				VisibleLayerSampling();
-			}
-			visibleStates.CopyTo(output, 0);
-		}
-
-        public void CalculateHiddenStates(float[] input, float[] output, bool isSamplingOutput){
-            HiddenLayerCalculateActivity(input);
-			if (isSamplingOutput) {
-		        HiddenLayerSampling();
-	        }
-			hiddenStates.CopyTo(output, 0);
-	    }
 
 		public float[] Weights {
 			get { return weights; }
