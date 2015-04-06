@@ -206,8 +206,8 @@ namespace LettersRecovery {
                                                         Enumerable.Repeat(0.5f, HiddenStatesCount).ToArray());
             //var gradientFunction = new LinearGradient();
 
-	        //var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
-			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 1);
+	        var trainMethod = new ContrastiveDivergence(_trainData, _testData, gradientFunction, 1);
+			//var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

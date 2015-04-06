@@ -64,6 +64,7 @@
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\Factories\RestrictedBoltzmannMachineFactory.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\BinaryBinaryRbm.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\BinaryNreluRbm.cs" />
+    <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\ClassificationRbm.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\GaussianBinaryRbm.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\GaussianNreluRbm.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\ReluNreluRbm.cs" />

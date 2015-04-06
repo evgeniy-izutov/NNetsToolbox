@@ -69,11 +69,11 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			hiddenStates.CopyTo(target, 0);
 		}
 
-		public void Predict(float[] input, float[] output) {
+		public virtual void Predict(float[] input, float[] output) {
 			Predict(input, output, true);
 		}
 
-		public float[] Predict(float[] input) {
+		public virtual float[] Predict(float[] input) {
 			HiddenLayerCalculateActivity(input);
 			HiddenLayerSampling();
 			VisibleLayerCalculateActivity();
@@ -81,7 +81,7 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			return (float[]) visibleStates.Clone();
 		}
 
-		public void Predict(float[] input, float[] output, bool isSamplingOutput) {
+		public virtual void Predict(float[] input, float[] output, bool isSamplingOutput) {
 			HiddenLayerCalculateActivity(input);
 			HiddenLayerSampling();
 			VisibleLayerCalculateActivity();
@@ -99,12 +99,10 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			hiddenStates.CopyTo(output, 0);
 	    }
 
-		public byte[] SaveState() {
+		public virtual byte[] SaveState() {
 			byte[] bytes;
             IFormatter formatter = new BinaryFormatter();
             using (var stream = new MemoryStream()) {
-                formatter.Serialize(stream, visibleStates);
-			    formatter.Serialize(stream, hiddenStates);
 			    formatter.Serialize(stream, weights);
 			    formatter.Serialize(stream, visibleStatesBias);
 			    formatter.Serialize(stream, hiddenStatesBias);
@@ -114,15 +112,16 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
             return bytes;
 		}
 
-		public void LoadState(byte[] state) {
+		public virtual void LoadState(byte[] state) {
 			IFormatter formatter = new BinaryFormatter();
             using (var stream = new MemoryStream(state)) {			
-				visibleStates = (float[]) formatter.Deserialize(stream);
-			    hiddenStates = (float[]) formatter.Deserialize(stream);
 			    weights = (float[]) formatter.Deserialize(stream);
 			    visibleStatesBias = (float[]) formatter.Deserialize(stream);
 			    hiddenStatesBias = (float[]) formatter.Deserialize(stream);
             }
+
+			visibleStates = new float[visibleStatesBias.Length];
+			hiddenStates = new float[hiddenStatesBias.Length];
 		}
 
 		public float[] Weights {
