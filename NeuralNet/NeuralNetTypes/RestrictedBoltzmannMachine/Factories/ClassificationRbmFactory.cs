@@ -1,83 +1,67 @@
 ﻿using System;
-using MathNet.Numerics.Distributions;
 using StandardTypes;
+using MathNet.Numerics.Distributions;
 
 namespace NeuralNet.RestrictedBoltzmannMachine {
-	public sealed class RestrictedBoltzmannMachineFactory : INeuralNetFactory {
+	public sealed class ClassificationRbmFactory : INeuralNetFactory {
 		private const float BiasStartValueBorder = 20.0f; //empirical only
 		private readonly int _visibleStatesCount;
 		private readonly int _hiddenStatesCount;
+		private readonly int _labelsCount;
 		private readonly DistributionType _startWeightGenerator;
-		private readonly RbmType _rbmType;
 		private readonly float[] _inputProbabilities;
+		private readonly float[] _labelProbabilities;
 		private static readonly Normal NormalGenerator;
 		private static readonly Random UniformGenerator;
 
-		static RestrictedBoltzmannMachineFactory() {
+		static ClassificationRbmFactory() {
 			UniformGenerator = new Random();
 			NormalGenerator = new Normal {
 				RandomSource = new Random()
 			};
 		}
 		
-		public RestrictedBoltzmannMachineFactory(RbmType rbmType, int visibleStatesCount, int hiddenStatesCount, 
-			DistributionType startWeightGenerator, float[] inputProbabilities = null) {
+		public ClassificationRbmFactory(int visibleStatesCount, int hiddenStatesCount, int labelsCount,
+			DistributionType startWeightGenerator,
+			float[] inputProbabilities = null,
+			float[] labelProbabilities = null) {
 
-			_rbmType = rbmType;
 			_visibleStatesCount = visibleStatesCount;
 			_hiddenStatesCount = hiddenStatesCount;
+			_labelsCount = labelsCount;
 			_startWeightGenerator = startWeightGenerator;
+			
 			_inputProbabilities = inputProbabilities;
+			_labelProbabilities = labelProbabilities;
 			if ((_inputProbabilities != null) && (_inputProbabilities.Length != visibleStatesCount)) {
 				_inputProbabilities = null;
 			}
 		}
 		
 		public INeuralNet CreateNeuralNet() {
-			var neuralNet = InstantiateRbm(_rbmType);
-			if (neuralNet == null) {
-				return null;
-			}
+			var neuralNet = new ClassificationRbm(_visibleStatesCount, _hiddenStatesCount, _labelsCount);
 
 			switch (_startWeightGenerator) {
 				case DistributionType.Null:
-					FillZero(neuralNet.Weights);
+					FillZero(neuralNet.VisibleStatesWeights);
+					FillZero(neuralNet.LabelsWeights);
 					break;
 				case DistributionType.Uniform:
-					FillUniform(neuralNet.Weights, _visibleStatesCount, _hiddenStatesCount, _inputProbabilities);
+					FillUniform(neuralNet.VisibleStatesWeights, _visibleStatesCount, _hiddenStatesCount, _inputProbabilities);
+					FillUniform(neuralNet.LabelsWeights, _labelsCount, _hiddenStatesCount, _labelProbabilities);
 					break;
 				case DistributionType.Normal:
-					FillNormal(neuralNet.Weights, _visibleStatesCount, _hiddenStatesCount, _inputProbabilities);
+					FillNormal(neuralNet.VisibleStatesWeights, _visibleStatesCount, _hiddenStatesCount, _inputProbabilities);
+					FillNormal(neuralNet.LabelsWeights, _labelsCount, _hiddenStatesCount, _labelProbabilities);
 					break;
 			}
 
 			FillBias(neuralNet.VisibleStatesBias, _inputProbabilities);
+			FillBias(neuralNet.LabelsBias, _labelProbabilities);
 			
 			FillZero(neuralNet.HiddenStatesBias);
 
 			return neuralNet;
-		}
-
-		private RestrictedBoltzmannMachine InstantiateRbm(RbmType rbmType) {
-			RestrictedBoltzmannMachine rbm = null;
-			switch (rbmType) {
-				case RbmType.BinaryBinary:
-					rbm = new BinaryBinaryRbm(_visibleStatesCount, _hiddenStatesCount);
-					break;
-				case RbmType.BinaryNrelu:
-					rbm = new BinaryNreluRbm(_visibleStatesCount, _hiddenStatesCount);
-					break;
-				case RbmType.GaussianBinary:
-					rbm = new GaussianBinaryRbm(_visibleStatesCount, _hiddenStatesCount);
-					break;
-				case RbmType.GaussianNrelu:
-					rbm = new GaussianNreluRbm(_visibleStatesCount, _hiddenStatesCount);
-					break;
-				case RbmType.ReluNrelu:
-					rbm = new ReluNreluRbm(_visibleStatesCount, _hiddenStatesCount);
-					break;
-			}
-			return rbm;
 		}
 
 		private static void FillZero(float[] array) {

@@ -14,7 +14,8 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		private float[] _labels;
 		private float[] _labelsBias;
 		private float[] _labelsWeights;
-		private float[] _temporaryPredictions;
+		private double[] _temporarySums;
+		private double[] _temporaryPredictions;
 
 		public ClassificationRbm() {
 			_uniformGenerator = new Random();
@@ -30,7 +31,13 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			_labels = new float[labelsCount];
 			_labelsBias = new float[labelsCount];
 			_labelsWeights = new float[labelsCount*hiddenStatesCount];
-			_temporaryPredictions = new float[hiddenStatesCount];
+			_temporarySums = new double[hiddenStatesCount];
+			_temporaryPredictions = new double[labelsCount];
+		}
+
+		public void InputLayerCalculateActivity() {
+			VisibleLayerCalculateActivity();
+			LabelLayerCalculateActivity();
 		}
 		
 		public void VisibleLayerCalculateActivity() {
@@ -76,7 +83,13 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 		}
 
 		public void HiddenLayerCalculateActivity() {
-			HiddenLayerCalculateActivity(_visibleStates, _hiddenStates);
+			HiddenLayerCalculateActivity(_visibleStates, _labels);
+		}
+
+		public void HiddenLayerSampling() {
+			for (var i = 0; i < _hiddenStates.Length; i++) {
+				_hiddenStates[i] = _uniformGenerator.NextDouble() < _hiddenStates[i] ? 1.0f : 0.0f;
+			}
 		}
 
 		public void HiddenLayerCalculateActivity(float[] newVisibleState, float[] newLabels) {
@@ -103,38 +116,37 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			return prediction;
 		}
 
-		public void Predict(float[] input, float[] output) {
-			float sum;
+		public void Predict(float[] input, float[] output) {		
+			double sum;
 			for (var j = 0; j < _hiddenStates.Length; j++) {
 				sum = _hiddenStatesBias[j];
 				
 				var weightsStartPos = j*_visibleStates.Length;
 				for (var k = 0; k < _visibleStates.Length; k++) {
-					sum += _visibleStates[k]*_visibleStatesWeights[weightsStartPos + k];
+					sum += input[k]*_visibleStatesWeights[weightsStartPos + k];
 				}
 
-				_temporaryPredictions[j] = sum;
+				_temporarySums[j] = sum;
 			}
 
 			for (var k = 0; k < _labels.Length; k++) {
-				_labels[k] = (float) Math.Exp(_labelsBias[k]);
+				_temporaryPredictions[k] = (float) Math.Exp(_labelsBias[k]);
 			}
 
 			for (var j = 0; j < _hiddenStates.Length; j++) {
-				var temporaryPrediction = _temporaryPredictions[j];
-				var weightsStartPos = j*_labels.Length;
+				var temporarySum = _temporarySums[j];
 				for (var k = 0; k < _labels.Length; k++) {
-					_labels[k] *= 1f + (float) Math.Exp(temporaryPrediction + _labelsWeights[weightsStartPos + k]);
+					_temporaryPredictions[k] *= 1d + Math.Exp(temporarySum + _labelsWeights[j*_labels.Length + k]);
 				}
 			}
 
-			sum = 0f;
+			sum = 0d;
 			for (var k = 0; k < _labels.Length; k++) {
-				sum += _labels[k];
+				sum += _temporaryPredictions[k];
 			}
 
 			for (var k = 0; k < _labels.Length; k++) {
-				output[k] = _labels[k]/sum;
+				output[k] = (float) (_temporaryPredictions[k]/sum);
 			}
 		}
 
@@ -166,7 +178,8 @@ namespace NeuralNet.RestrictedBoltzmannMachine {
 			_visibleStates = new float[_visibleStatesBias.Length];
 			_hiddenStates = new float[_hiddenStatesBias.Length];
 			_labels = new float[_labelsBias.Length];
-			_temporaryPredictions = new float[_hiddenStatesBias.Length];
+			_temporarySums = new double[_hiddenStatesBias.Length];
+			_temporaryPredictions = new double[_labelsBias.Length];
 		}
 
 		public float[] VisibleStatesWeights {

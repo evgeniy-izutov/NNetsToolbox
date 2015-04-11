@@ -322,12 +322,14 @@ namespace LettersRecovery {
 					for (var m = 0; m < ImageSize; m++) {
 						for (var n = 0; n < ImageSize; n++) {
 							var weight = weights[index*vectorSize + m*ImageSize + n];
-							pixels[i*blocksCount*vectorSize + j*ImageSize + m*blocksCount*ImageSize + n ] = (byte) ((weight - localMin)*255.0/(localMax - localMin));
+							pixels[i*blocksCount*vectorSize + j*ImageSize + m*blocksCount*ImageSize + n ] =
+								(byte) ((weight - localMin)*255.0/(localMax - localMin));
 						}
 					}
 				}
 			}
-			var bitmapImage = BitmapSource.Create(ImageSize*blocksCount, ImageSize*blocksCount, 96d, 96d, PixelFormats.Gray8, null, pixels, ImageSize*blocksCount);
+			var bitmapImage = BitmapSource.Create(ImageSize*blocksCount, ImageSize*blocksCount,
+				96d, 96d, PixelFormats.Gray8, null, pixels, ImageSize*blocksCount);
 			var stream = new FileStream(WeightsStatPath + "weights.png", FileMode.Create);
 			var encoder = new PngBitmapEncoder();
 			encoder.Frames.Add(BitmapFrame.Create(bitmapImage));

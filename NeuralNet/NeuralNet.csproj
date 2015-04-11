@@ -60,6 +60,7 @@
     <Compile Include="NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\TrainMethods\BackPropagationAlgorithm.cs" />
     <Compile Include="NeuralNetTypes\BlockType\NeuralNets\MultyLayerPerceptron\TrainMethods\GeneticAlgorithmTrainOnDistribution.cs" />
     <Compile Include="NeuralNetTypes\BlockType\Blocks\BaseNeuralBlock.cs" />
+    <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\Factories\ClassificationRbmFactory.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\Factories\RbmType.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\Factories\RestrictedBoltzmannMachineFactory.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\BinaryBinaryRbm.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\GaussianNreluRbm.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\ReluNreluRbm.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\RBM types\RestrictedBoltzmannMachine.cs" />
+    <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\ClassificationRbmTrainMethod.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\ContrastiveDivergence.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\FastPersistentContrastiveDivergence.cs" />
     <Compile Include="NeuralNetTypes\RestrictedBoltzmannMachine\TrainMethods\Gradients\CenteredGradient.cs" />
