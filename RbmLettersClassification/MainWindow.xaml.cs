@@ -30,7 +30,7 @@ namespace RbmLettersClassification {
         private const float FalseValue = 0.0f;
 	    private const int ImageSize = 28;
 	    private const int InputLayerSize = ImageSize*ImageSize;
-	    private const int HiddenLayerSize = 100;
+	    private const int HiddenLayerSize = 25;
         private const int OutputLayerSize = 10;
         private ClassificationRbm _neuralNet;
         private float[] _neuralNetOutput;
@@ -138,7 +138,7 @@ namespace RbmLettersClassification {
 			float[] priorClassDistribution;
 			CalculateVisibleUnitsProbability(out visibleUnitsProbability, out priorClassDistribution);
 			
-			CreateNeuronNet(visibleUnitsProbability, null);
+			CreateNeuronNet(null, null);
 			TrainNeuralNet();
 
 			TestNeuralNet();
@@ -173,20 +173,21 @@ namespace RbmLettersClassification {
 				CvSlidingFactor = 0.5f,
         		Metrics = new CrossEntropyForSoftmax(),
         		PackageSize = 100,
-				BaseLearnSpeed = 0.001f/10f,
+				BaseLearnSpeed = 0.0001f,
 				SpeedBonus = 0.0001f,
 				SpeedPenalty = 0.9999f,
 				SpeedUpBorder = float.MaxValue,
 				SpeedLowBorder = float.MinValue,
 				LearnFactorStrategy = new SqrtReverseFactor(),
 				AverageLearnFactor = 0.6f,
-				Momentum = 0.96f,
+				Momentum = 0.0f,
         		//Regularization = new EliminationRegularization(0.001f, 1.2f)
 				Regularization = new L1(0.0001f)
 				//Regularization = new NoRegularization()
         	};
 			
-			var trainMethod = new GenerativeTrainMethod(_trainData, _testData, 1);
+			//var trainMethod = new GenerativeTrainMethod(_trainData, _testData, 1);
+			var trainMethod = new DiscriminativeTrainMethod(_trainData, _testData);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

@@ -16,11 +16,9 @@ namespace NeuralNet.ClassificationRbm {
 		private int _epochNumber;
 		private int _packagesCount;
 
-		private readonly int _methodStepsCount;
-
 		private float[] _packageDerivativeForVisibleWeights;
 		private float[] _packageDerivativeForLabelWeights;
-		private float[] _packageDerivativeForVisibleBias;
+		//private float[] _packageDerivativeForVisibleBias;
 		private float[] _packageDerivativeForHiddenBias;
 		private float[] _packageDerivativeForLabelBias;
 		
@@ -30,9 +28,9 @@ namespace NeuralNet.ClassificationRbm {
 		private float[] _learnFactorsLabelWeights;
 		private float[] _derivativeAveragesVisibleWeights;
 		private float[] _derivativeAveragesLabelWeights;
-		private float[] _oldDeltaWeightsForVisibleBias;
-		private float[] _learnFactorsForVisibleBias;
-		private float[] _derivativeAveragesForVisibleBias;
+		//private float[] _oldDeltaWeightsForVisibleBias;
+		//private float[] _learnFactorsForVisibleBias;
+		//private float[] _derivativeAveragesForVisibleBias;
 		private float[] _oldDeltaWeightsForHiddenBias;
 		private float[] _learnFactorsForHiddenBias;
 		private float[] _derivativeAveragesForHiddenBias;
@@ -40,15 +38,17 @@ namespace NeuralNet.ClassificationRbm {
 		private float[] _learnFactorsForLabelBias;
 		private float[] _derivativeAveragesForLabelBias;
 
-		public DiscriminativeTrainMethod(IList<TrainPair> trainData, int methodStepsCount) {
-			_methodStepsCount = methodStepsCount;
+		private double[] _temporarySums;
+		private double[] _temporaryPredictions;
+		private float[] _temporarySigmas;
+
+		public DiscriminativeTrainMethod(IList<TrainPair> trainData) {
 			_trainDataIterator = new RandomAccessIterator<TrainPair>(trainData);
 		}
 
-		public DiscriminativeTrainMethod(IList<TrainPair> trainData, IList<TrainPair> testData, int methodStepsCount) {
+		public DiscriminativeTrainMethod(IList<TrainPair> trainData, IList<TrainPair> testData) {
 			_trainDataIterator = new RandomAccessIterator<TrainPair>(trainData);
 			_testData = testData;
-			_methodStepsCount = methodStepsCount;
 		}
 		
 		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties trainProperties) {
@@ -105,15 +105,15 @@ namespace NeuralNet.ClassificationRbm {
 				_learnFactorsLabelWeights[i] = 1.0f;
 			}
 
-			_packageDerivativeForVisibleBias = new float[_visibleStatesCount];
-			_oldDeltaWeightsForVisibleBias = new float[_visibleStatesCount];
-			_derivativeAveragesForVisibleBias = new float[_visibleStatesCount];
-			_learnFactorsForVisibleBias = new float[_visibleStatesCount];
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				_oldDeltaWeightsForVisibleBias[i] = 0.0f;
-				_derivativeAveragesForVisibleBias[i] = 0.0f;
-				_learnFactorsForVisibleBias[i] = 1.0f;
-			}
+			//_packageDerivativeForVisibleBias = new float[_visibleStatesCount];
+			//_oldDeltaWeightsForVisibleBias = new float[_visibleStatesCount];
+			//_derivativeAveragesForVisibleBias = new float[_visibleStatesCount];
+			//_learnFactorsForVisibleBias = new float[_visibleStatesCount];
+			//for (var i = 0; i < _visibleStatesCount; i++) {
+			//	_oldDeltaWeightsForVisibleBias[i] = 0.0f;
+			//	_derivativeAveragesForVisibleBias[i] = 0.0f;
+			//	_learnFactorsForVisibleBias[i] = 1.0f;
+			//}
 
 			_packageDerivativeForHiddenBias = new float[_hiddenStatesCount];
 			_oldDeltaWeightsForHiddenBias = new float[_hiddenStatesCount];
@@ -134,28 +134,32 @@ namespace NeuralNet.ClassificationRbm {
 				_derivativeAveragesForLabelBias[i] = 0.0f;
 				_learnFactorsForLabelBias[i] = 1.0f;
 			}
+
+			_temporarySums = new double[_hiddenStatesCount];
+			_temporaryPredictions = new double[_labelsCount];
+			_temporarySigmas = new float[_labelsCount];
 		}
 
 		private void ClearReference() {
 			_oldDeltaVisibleWeights = null;
 			_oldDeltaLabelWeights = null;
-			_oldDeltaWeightsForVisibleBias = null;
+			//_oldDeltaWeightsForVisibleBias = null;
 			_oldDeltaWeightsForHiddenBias = null;
 			_oldDeltaWeightsForLabelBias = null;
 			_derivativeAveragesVisibleWeights = null;
 			_derivativeAveragesLabelWeights = null;
-			_derivativeAveragesForVisibleBias = null;
+			//_derivativeAveragesForVisibleBias = null;
 			_derivativeAveragesForHiddenBias = null;
 			_derivativeAveragesForLabelBias = null;
 			_learnFactorsVisibleWeights = null;
 			_learnFactorsLabelWeights = null;
-			_learnFactorsForVisibleBias = null;
+			//_learnFactorsForVisibleBias = null;
 			_learnFactorsForHiddenBias = null;
 			_learnFactorsForLabelBias = null;
 
 			_packageDerivativeForVisibleWeights = null;
 			_packageDerivativeForLabelWeights = null;
-			_packageDerivativeForVisibleBias = null;
+			//_packageDerivativeForVisibleBias = null;
 			_packageDerivativeForHiddenBias = null;
 			_packageDerivativeForLabelBias = null;
 		}
@@ -250,80 +254,98 @@ namespace NeuralNet.ClassificationRbm {
 				var input = curTrainPair.Input;
 				var labels = curTrainPair.Output;
 				
-				MakePositivePhase(input, labels);
+				//MakePositivePhase(input, labels);
 				StorePositivePhaseData(input, labels, _neuralNet.HiddenStates);
-				MakeNegativePhase(packageId);
-				StoreNegativePhaseData(_neuralNet.VisibleStates, _neuralNet.Labels, _neuralNet.HiddenStates);
+				//MakeNegativePhase(packageId);
+				//StoreNegativePhaseData(_neuralNet.VisibleStates, _neuralNet.Labels, _neuralNet.HiddenStates);
 				//RestoreVisibleStates(packageId);
 			}
 			MakeGradient(_packageFactor);
 			ModifyWeightsOfNeuronNet();
 		}
 
-		private void MakePositivePhase(float[] input, float[] labels) {
-			_neuralNet.HiddenLayerCalculateActivity(input, labels);
-		}
-
 		private void StorePositivePhaseData(float[] visibleStates, float[] labels, float[] hiddenStates) {
-			for (var j = 0; j < _hiddenStatesCount; j++) {
-				var hiddenSate = hiddenStates[j];
-				
-				var startIndex = j*_visibleStatesCount;
-				for (var i = 0; i < _visibleStatesCount; i++) {
-					_packageDerivativeForVisibleWeights[startIndex + i] += visibleStates[i]*hiddenSate;
-				}
+			var labelsWeights = _neuralNet.LabelsWeights;
+			
+			MakePrediction(visibleStates, _temporaryPredictions, _temporarySums);
 
-				startIndex = j*_labelsCount;
-				for (var k = 0; k < _labelsCount; k++) {
-					_packageDerivativeForLabelWeights[startIndex + k] += labels[k]*hiddenSate;
-				}
-
-				_packageDerivativeForHiddenBias[j] += hiddenSate;
+			var weightedLabelPredictionSum = 0f;
+			for (var i = 0; i < labels.Length; i++) {
+				weightedLabelPredictionSum += labels[i] * (float)_temporaryPredictions[i];
 			}
 
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				_packageDerivativeForVisibleBias[i] += visibleStates[i];
+			for (var j = 0; j < _hiddenStatesCount; j++) {
+				var temporarySum = _temporarySums[j];
+
+				var weightedSigmaLabelSum = 0f;
+				var weightedSigmaPredictionSum = 0f;
+				var startIndex = j*_labelsCount;
+				for (var k = 0; k < _labelsCount; k++) {
+					var sigma = 1f/(1f + (float) Math.Exp(temporarySum + labelsWeights[startIndex + k]));
+					
+					var weightedSigma = sigma*labels[k];
+					_temporarySigmas[k] = weightedSigma;
+					weightedSigmaLabelSum += weightedSigma;
+
+					weightedSigmaPredictionSum += sigma * (float)_temporaryPredictions[k];
+				}
+
+				_packageDerivativeForHiddenBias[j] += weightedSigmaLabelSum - weightedSigmaPredictionSum;
+
+				startIndex = j*_visibleStatesCount;
+				for (var i = 0; i < _visibleStatesCount; i++) {
+					_packageDerivativeForVisibleWeights[startIndex + i] += visibleStates[i]
+						*(weightedSigmaLabelSum - weightedSigmaPredictionSum);
+				}
+				
+				startIndex = j*_labelsCount;
+				for (var k = 0; k < _labelsCount; k++) {
+					_packageDerivativeForLabelWeights[startIndex + k] += _temporarySigmas[k]*labels[k]
+						- weightedSigmaLabelSum;
+				}
 			}
 
 			for (var k = 0; k < _labelsCount; k++) {
-				_packageDerivativeForLabelBias[k] += labels[k];
+				_packageDerivativeForLabelBias[k] += labels[k] - weightedLabelPredictionSum;
 			}
 		}
 
-		private void MakeNegativePhase(int packageId) {
-			_neuralNet.HiddenLayerSampling();
-			_neuralNet.InputLayerCalculateActivity();
-			for (var k = 1; k < _methodStepsCount; k++) {
-				_neuralNet.HiddenLayerCalculateActivity();
-				_neuralNet.HiddenLayerSampling();
-				_neuralNet.InputLayerCalculateActivity();
-			}
-			_neuralNet.HiddenLayerCalculateActivity();
-		}
-
-		private void StoreNegativePhaseData(float[] visibleStates, float[] labels, float[] hiddenStates) {
+		private void MakePrediction(float[] input, double[] predictions, double[] sums) {
+			var hiddenStatesBias = _neuralNet.HiddenStatesBias;
+			var labelsBias = _neuralNet.LabelsBias;
+			var visibleStatesWeights = _neuralNet.VisibleStatesWeights;
+			var labelsWeights = _neuralNet.LabelsWeights;
+			
+			double sum;
 			for (var j = 0; j < _hiddenStatesCount; j++) {
-				var hiddenSate = hiddenStates[j];
+				sum = hiddenStatesBias[j];
 				
-				var startIndex = j*_visibleStatesCount;
-				for (var i = 0; i < _visibleStatesCount; i++) {
-					_packageDerivativeForVisibleWeights[startIndex + i] -= visibleStates[i]*hiddenSate;
+				var weightsStartPos = j*_visibleStatesCount;
+				for (var k = 0; k < _visibleStatesCount; k++) {
+					sum += input[k]*visibleStatesWeights[weightsStartPos + k];
 				}
 
-				startIndex = j*_labelsCount;
-				for (var k = 0; k < _labelsCount; k++) {
-					_packageDerivativeForLabelWeights[startIndex + k] -= labels[k]*hiddenSate;
-				}
-
-				_packageDerivativeForHiddenBias[j] -= hiddenSate;
-			}
-
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				_packageDerivativeForVisibleBias[i] -= visibleStates[i];
+				sums[j] = sum;
 			}
 
 			for (var k = 0; k < _labelsCount; k++) {
-				_packageDerivativeForLabelBias[k] -= labels[k];
+				predictions[k] = (float) Math.Exp(labelsBias[k]);
+			}
+
+			for (var j = 0; j < _hiddenStatesCount; j++) {
+				var temporarySum = sums[j];
+				for (var k = 0; k < _labelsCount; k++) {
+					predictions[k] *= 1d + Math.Exp(temporarySum + labelsWeights[j*_labelsCount + k]);
+				}
+			}
+
+			sum = 0d;
+			for (var k = 0; k < _labelsCount; k++) {
+				sum += predictions[k];
+			}
+
+			for (var k = 0; k < _labelsCount; k++) {
+				predictions[k] /= sum;
 			}
 		}
 
@@ -340,10 +362,6 @@ namespace NeuralNet.ClassificationRbm {
 				}
 
 				_packageDerivativeForHiddenBias[j] *= packageFactor;
-			}
-
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				_packageDerivativeForVisibleBias[i] *= packageFactor;
 			}
 
 			for (var k = 0; k < _labelsCount; k++) {
@@ -394,23 +412,6 @@ namespace NeuralNet.ClassificationRbm {
 					_oldDeltaLabelWeights[weightIndex] = newDeltaWeight;
 					labelWeights[weightIndex] += (1f + _properties.Momentum)*newDeltaWeight;
 				}
-			}
-
-			var visibleStatesBias = _neuralNet.VisibleStatesBias;
-			for (var i = 0; i < _visibleStatesCount; i++) {
-				var lastDerivativeAverageForVisibleBias = _derivativeAveragesForVisibleBias[i];
-				var partialDerivativeForVisibleBias = _packageDerivativeForVisibleBias[i];
-				_packageDerivativeForVisibleBias[i] = 0f;
-				_learnFactorsForVisibleBias[i] = (lastDerivativeAverageForVisibleBias*partialDerivativeForVisibleBias > 0.0f) ?
-					Math.Min(_learnFactorsForVisibleBias[i] + _properties.SpeedBonus, _properties.SpeedUpBorder):
-					Math.Max(_learnFactorsForVisibleBias[i]*_properties.SpeedPenalty, _properties.SpeedLowBorder);
-				_derivativeAveragesForVisibleBias[i] = _properties.AverageLearnFactor*partialDerivativeForVisibleBias + 
-					(1f - _properties.AverageLearnFactor)*lastDerivativeAverageForVisibleBias;
-
-				var newDeltaForVisibleBias = curLearnSpeed*_learnFactorsForVisibleBias[i]*partialDerivativeForVisibleBias + 
-					                         _properties.Momentum*_oldDeltaWeightsForVisibleBias[i];
-				_oldDeltaWeightsForVisibleBias[i] = newDeltaForVisibleBias;
-				visibleStatesBias[i] += (1f + _properties.Momentum)*newDeltaForVisibleBias;
 			}
 
 			var hiddenStatesBias = _neuralNet.HiddenStatesBias;
