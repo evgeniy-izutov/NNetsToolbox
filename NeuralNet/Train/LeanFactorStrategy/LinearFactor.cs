@@ -1,4 +1,4 @@
-﻿namespace NeuralNet {
+﻿namespace NeuralNet.LeanFactorStrategy {
     public sealed class LinearFactor : ILearnFactorStrategy {
         private readonly float _a;
         private readonly float _b;

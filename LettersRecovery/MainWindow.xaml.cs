@@ -12,7 +12,9 @@ using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MathNet.Numerics.Statistics;
 using NeuralNet;
-using NeuralNet.RestrictedBoltzmannMachine;
+using NeuralNet.GenerativeRbm;
+using NeuralNet.LeanFactorStrategy;
+using NeuralNet.RegularizationFunctions;
 using StandardTypes;
 using Point = System.Windows.Point;
 using NativeWrapper = NeuralNetNativeWrapper.RestrictedBoltzmannMachineNativeWrapper;
@@ -147,7 +149,7 @@ namespace LettersRecovery {
         }
 
         private void CreateNeuronNet(float[] visibleUnitsProbability) {
-			var neuronFactory = new RestrictedBoltzmannMachineFactory(RbmType.BinaryBinary, VisibleStatesCount, HiddenStatesCount, 
+			var neuronFactory = new Factory(RbmType.BinaryBinary, VisibleStatesCount, HiddenStatesCount, 
 				DistributionType.Uniform, visibleUnitsProbability);
             _neuralNet = (RestrictedBoltzmannMachine) neuronFactory.CreateNeuralNet();
         }
@@ -198,7 +200,7 @@ namespace LettersRecovery {
 
                 //Regularization = new NoRegularization()
         		//Regularization = new EliminationRegularization(0.001f, 1.3f)
-				Regularization = new L2Regularization(0.01f)
+				Regularization = new L2(0.01f)
         	};
 
             var gradientFunction = new CenteredGradient(0.5f,

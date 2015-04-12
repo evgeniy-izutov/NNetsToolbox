@@ -10,10 +10,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
-using NeuralNet;
-using NeuralNet.MultyLayerPerceptron;
 using MathNet.Numerics.Statistics;
-using NeuralNet.RestrictedBoltzmannMachine;
+using NeuralNet;
+using NeuralNet.ActivationFunctions;
+using NeuralNet.LeanFactorStrategy;
+using NeuralNet.MultyLayerPerceptron;
+using NeuralNet.RegularizationFunctions;
 using StandardTypes;
 
 namespace LettersClassification {
@@ -53,7 +55,7 @@ namespace LettersClassification {
     	private Stopwatch _stopWatch;
 		private int _preTrainedIter;
 		private int[] _neuronsCount;
-	    private RestrictedBoltzmannMachine[] _rbms;
+	    //private RestrictedBoltzmannMachine[] _rbms;
 
     	public MainWindow() {
             InitializeComponent();
@@ -78,7 +80,7 @@ namespace LettersClassification {
 			_sourceTrain = new ObservableDataSource<Point>();
 			_sourceCrossValidation = new ObservableDataSource<Point>();
 			_stopWatch = new Stopwatch();
-			_rbms = new RestrictedBoltzmannMachine[NumberPretrainedHiddenLayers];
+			//_rbms = new RestrictedBoltzmannMachine[NumberPretrainedHiddenLayers];
         }
 
 		private void CreateProgressChart() {
@@ -188,11 +190,11 @@ namespace LettersClassification {
         private void CreateNeuronNet() {
             var inputLayerSzie = _normalizeMethod.InputVectorSize;
 			_neuronsCount = new[]{inputLayerSzie, HiddenLayer1Size, HiddenLayer2Size, OutputLayerSize};
-			var hiddenLayersFunction = new HyperbolicTangensFunction(1.0f, 1.0f);
-        	var outputLayerFunction = new SoftmaxFunction();
+			var hiddenLayersFunction = new HyperbolicTangens(1.0f, 1.0f);
+        	var outputLayerFunction = new Softmax();
 	        var weightGenerator = new ImprovedBestActiveZone(Distribution.Normal, _trainData);
 			//var weightGenerator = new BestActiveZone(Distribution.Normal);
-			var neuronFactory = new MultyLayerPerceptronFactory(_neuronsCount, hiddenLayersFunction, outputLayerFunction, weightGenerator);
+			var neuronFactory = new Factory(_neuronsCount, hiddenLayersFunction, outputLayerFunction, weightGenerator);
             _neuralNet = neuronFactory.CreateNeuralNet();
 
 			//var iterCounts = new[] {400, 400, 500, 600};
@@ -248,26 +250,26 @@ namespace LettersClassification {
 			return retList;
 		}
 
-	    private static IList<TrainSingle> BuildNextPretrainedData(RestrictedBoltzmannMachine rbmNet, IList<TrainSingle> sourceData, 
-			int outputSize, bool isSamplingOutput) {
+		//private static IList<TrainSingle> BuildNextPretrainedData(RestrictedBoltzmannMachine rbmNet, IList<TrainSingle> sourceData, 
+		//	int outputSize, bool isSamplingOutput) {
 
-		    var retList = new List<TrainSingle>(sourceData.Count);
-			for (var i = 0; i < sourceData.Count; i++) {
-				var output = new float[outputSize];
-				rbmNet.CalculateHiddenStates(sourceData[i].Input, output, isSamplingOutput);
-				retList.Add(new TrainSingle(output));
-			}
-		    return retList;
-	    }
+		//	var retList = new List<TrainSingle>(sourceData.Count);
+		//	for (var i = 0; i < sourceData.Count; i++) {
+		//		var output = new float[outputSize];
+		//		rbmNet.CalculateHiddenStates(sourceData[i].Input, output, isSamplingOutput);
+		//		retList.Add(new TrainSingle(output));
+		//	}
+		//	return retList;
+		//}
 
-		private static void SetWeights(float[] sourceWeights, float[] sourceBias, float[] targetWeights, float[] targetBias) {
-		    for (var i = 0; i < targetWeights.Length; i++) {
-			    targetWeights[i] = sourceWeights[i];
-		    }
-			for (var i = 0; i < targetBias.Length; i++) {
-				targetBias[i] = sourceBias[i];
-			}
-	    }
+		//private static void SetWeights(float[] sourceWeights, float[] sourceBias, float[] targetWeights, float[] targetBias) {
+		//	for (var i = 0; i < targetWeights.Length; i++) {
+		//		targetWeights[i] = sourceWeights[i];
+		//	}
+		//	for (var i = 0; i < targetBias.Length; i++) {
+		//		targetBias[i] = sourceBias[i];
+		//	}
+		//}
 
 		private void CompleteMainProcedure() {
 			CreateNeuronNet();
@@ -294,7 +296,7 @@ namespace LettersClassification {
 				LearnFactorStrategy = new ReverseFactor(),
 				AverageLearnFactor = 0.7f,
 				Momentum = 0.99f,
-        		Regularization = new EliminationRegularization(0.001f, 1.2f)
+        		Regularization = new Elimination(0.001f, 1.2f)
 				//Regularization = new L2Regularization(0.00001f)
 				//Regularization = new NoRegularization()
         	};
@@ -313,25 +315,26 @@ namespace LettersClassification {
             _stopWatch.Stop();
         }
 
-	    private List<TrainPair> BuildPretranedData(List<TrainPair> data) {
-		    var result = new List<TrainPair>(data.Count);
+		//private List<TrainPair> BuildPretranedData(List<TrainPair> data) {
+		//	var result = new List<TrainPair>(data.Count);
 		    
-			var singleData = BuildStartPretrainedData(data);
-			for (var i = 0; i < NumberPretrainedHiddenLayers - 1; i++) {
-				singleData = BuildNextPretrainedData(_rbms[i], singleData, _neuronsCount[i + 1], true);
-		    }
-			singleData = BuildNextPretrainedData(_rbms[NumberPretrainedHiddenLayers - 1], singleData, _neuronsCount[NumberPretrainedHiddenLayers], false);
+		//	var singleData = BuildStartPretrainedData(data);
+		//	for (var i = 0; i < NumberPretrainedHiddenLayers - 1; i++) {
+		//		singleData = BuildNextPretrainedData(_rbms[i], singleData, _neuronsCount[i + 1], true);
+		//	}
+		//	singleData = BuildNextPretrainedData(_rbms[NumberPretrainedHiddenLayers - 1], singleData,
+		//		_neuronsCount[NumberPretrainedHiddenLayers], false);
 
-		    for (var i = 0; i < data.Count; i++) {
-			    var newPair = new TrainPair(singleData[i].Input, data[i].Output, singleData[i].MissedInputIndexes,
-				    data[i].MissedOutputIndexes);
-			    newPair.Id = data[i].Id;
-			    newPair.Weight = data[i].Weight;
-				result.Add(newPair);
-		    }
+		//	for (var i = 0; i < data.Count; i++) {
+		//		var newPair = new TrainPair(singleData[i].Input, data[i].Output, singleData[i].MissedInputIndexes,
+		//			data[i].MissedOutputIndexes);
+		//		newPair.Id = data[i].Id;
+		//		newPair.Weight = data[i].Weight;
+		//		result.Add(newPair);
+		//	}
 
-		    return result;
-	    } 
+		//	return result;
+		//} 
 
         private void TrainingIterationCompleted (object sender, IterationCompletedEventArgs e) {
             var pointTrain = new Point(e.IterationNum, e.IterationValue);
@@ -343,15 +346,15 @@ namespace LettersClassification {
 	        }
         }
 
-		private void PreTrainingIterationCompleted (object sender, IterationCompletedEventArgs e) {
-            var pointLearning = new Point(e.IterationNum, e.IterationValue);
-            _preTrainedProgress[_preTrainedIter].AppendAsync(Dispatcher, pointLearning);
+		//private void PreTrainingIterationCompleted (object sender, IterationCompletedEventArgs e) {
+		//	var pointLearning = new Point(e.IterationNum, e.IterationValue);
+		//	_preTrainedProgress[_preTrainedIter].AppendAsync(Dispatcher, pointLearning);
 
-			if (!float.IsNaN(e.AddedIterationValue)) {
-		        var pointTesting = new Point(e.IterationNum, e.AddedIterationValue);
-				_preTestedProgress[_preTrainedIter].AppendAsync(Dispatcher, pointTesting);
-	        }
-        }
+		//	if (!float.IsNaN(e.AddedIterationValue)) {
+		//		var pointTesting = new Point(e.IterationNum, e.AddedIterationValue);
+		//		_preTestedProgress[_preTrainedIter].AppendAsync(Dispatcher, pointTesting);
+		//	}
+		//}
 
 		private void ListBoxLearningPairsSelectionChanged(object sender, SelectionChangedEventArgs e) {
             var imageIndex = ListBoxTrainExample.SelectedIndex;

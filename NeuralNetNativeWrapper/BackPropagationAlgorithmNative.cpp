@@ -16,23 +16,33 @@
 #include "ReverseFactor.h"
 #include "SqrtReverseFactor.h"
 
+using namespace NeuralNet::NeuralNetBlocks;
+using namespace NeuralNet::ActivationFunctions;
+
+
 namespace NeuralNetNativeWrapper {
 	namespace MultyLayerPerceptronNativeWrapper {
 		BackPropagationAlgorithmNative::BackPropagationAlgorithmNative(IList<TrainPair^>^ trainData) {
 			AllocateNativeTrainData(trainData);
-			_nativeAlgorithm = new NeuralNetNative::MultyLayerPerceptron::BackPropagationAlgorithm(_nativeTrainData, _nativeTrainDataSize);
+			_nativeAlgorithm = new NeuralNetNative::MultyLayerPerceptron::BackPropagationAlgorithm(_nativeTrainData,
+                _nativeTrainDataSize);
 
-			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &BackPropagationAlgorithmNative::IterationCompletedHandler));
-			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &BackPropagationAlgorithmNative::IterativeProcessFinishedHandler));
+			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this,
+                &BackPropagationAlgorithmNative::IterationCompletedHandler));
+			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this,
+                &BackPropagationAlgorithmNative::IterativeProcessFinishedHandler));
 		}
 
 		BackPropagationAlgorithmNative::BackPropagationAlgorithmNative(IList<TrainPair^>^ trainData, IList<TrainPair^>^ testData) {
 			AllocateNativeTrainData(trainData);
 			AllocateNativeTestData(testData);
-			_nativeAlgorithm = new NeuralNetNative::MultyLayerPerceptron::BackPropagationAlgorithm(_nativeTrainData, _nativeTrainDataSize, _nativeTestData, _nativeTestDataSize);
+			_nativeAlgorithm = new NeuralNetNative::MultyLayerPerceptron::BackPropagationAlgorithm(_nativeTrainData,
+                _nativeTrainDataSize, _nativeTestData, _nativeTestDataSize);
 
-			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &BackPropagationAlgorithmNative::IterationCompletedHandler));
-			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &BackPropagationAlgorithmNative::IterativeProcessFinishedHandler));
+			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this,
+                &BackPropagationAlgorithmNative::IterationCompletedHandler));
+			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this,
+                &BackPropagationAlgorithmNative::IterativeProcessFinishedHandler));
 		}
 		
 		BackPropagationAlgorithmNative::~BackPropagationAlgorithmNative(void) {
@@ -89,12 +99,12 @@ namespace NeuralNetNativeWrapper {
 
 			array<BaseNeuralBlock^>^ layers = _multyLayerPerceptron->Layers;
 			IActivationFunction^ hiddenFunction = layers[0]->GetActivationFunction();
-			if (dynamic_cast<HyperbolicTangensFunction^>(hiddenFunction) != nullptr) {
-				HyperbolicTangensFunction^ hFun = dynamic_cast<HyperbolicTangensFunction^>(hiddenFunction);
+			if (dynamic_cast<HyperbolicTangens^>(hiddenFunction) != nullptr) {
+				HyperbolicTangens^ hFun = dynamic_cast<HyperbolicTangens^>(hiddenFunction);
 				_hiddenActivationFunction = new NeuralNetNative::HyperbolicTangensFunction(hFun->Alpha, hFun->Betta);
 			}
-			else if (dynamic_cast<SigmoidFunction^>(hiddenFunction) != nullptr) {
-				SigmoidFunction^ sFun = dynamic_cast<SigmoidFunction^>(hiddenFunction);
+			else if (dynamic_cast<Sigmoid^>(hiddenFunction) != nullptr) {
+				Sigmoid^ sFun = dynamic_cast<Sigmoid^>(hiddenFunction);
 				_hiddenActivationFunction = new NeuralNetNative::SigmoidFunction(sFun->Alpha);
 			}
 			else {
@@ -102,12 +112,12 @@ namespace NeuralNetNativeWrapper {
 			}
 
 			IActivationFunction^ outputFunction = layers[layersCount - 1]->GetActivationFunction();
-			if (dynamic_cast<HyperbolicTangensFunction^>(outputFunction) != nullptr) {
-				HyperbolicTangensFunction^ hFun = dynamic_cast<HyperbolicTangensFunction^>(outputFunction);
+			if (dynamic_cast<HyperbolicTangens^>(outputFunction) != nullptr) {
+				HyperbolicTangens^ hFun = dynamic_cast<HyperbolicTangens^>(outputFunction);
 				_outputActivationFunction = new NeuralNetNative::HyperbolicTangensFunction(hFun->Alpha, hFun->Betta);
 			}
-			else if (dynamic_cast<SigmoidFunction^>(outputFunction) != nullptr) {
-				SigmoidFunction^ sFun = dynamic_cast<SigmoidFunction^>(outputFunction);
+			else if (dynamic_cast<Sigmoid^>(outputFunction) != nullptr) {
+				Sigmoid^ sFun = dynamic_cast<Sigmoid^>(outputFunction);
 				_outputActivationFunction = new NeuralNetNative::SigmoidFunction(sFun->Alpha);
 			}
 			else {

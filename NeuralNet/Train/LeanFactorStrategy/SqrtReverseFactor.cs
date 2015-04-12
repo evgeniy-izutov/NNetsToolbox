@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeuralNet {
+namespace NeuralNet.LeanFactorStrategy {
 	public sealed class SqrtReverseFactor : ILearnFactorStrategy {
 		private const float Epsilon = 0.000001f;
 		

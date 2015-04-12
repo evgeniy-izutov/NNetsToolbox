@@ -1,4 +1,4 @@
-﻿namespace NeuralNet {
+﻿namespace NeuralNet.LeanFactorStrategy {
 	public sealed class ConstantFactor : ILearnFactorStrategy {
 		private readonly float _constValue;
 		

@@ -11,7 +11,9 @@ using System.Windows.Threading;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using NeuralNet;
-using NeuralNet.RestrictedBoltzmannMachine;
+using NeuralNet.ClassificationRbm;
+using NeuralNet.LeanFactorStrategy;
+using NeuralNet.RegularizationFunctions;
 using StandardTypes;
 
 namespace RbmLettersClassification {
@@ -126,7 +128,7 @@ namespace RbmLettersClassification {
         }
 
         private void CreateNeuronNet(float[] inputProbability, float[] labelProbability) {
-			var neuronFactory = new ClassificationRbmFactory(InputLayerSize, HiddenLayerSize, OutputLayerSize,
+			var neuronFactory = new Factory(InputLayerSize, HiddenLayerSize, OutputLayerSize,
 				DistributionType.Normal, inputProbability, labelProbability);
             _neuralNet = neuronFactory.CreateNeuralNet() as ClassificationRbm;
         }
@@ -165,9 +167,9 @@ namespace RbmLettersClassification {
         private void TrainNeuralNet () {
         	_trainProperties = new TrainProperties {
         		Epsilon = 0.0001f,
-        		MaxIterationCount = 25,
+        		MaxIterationCount = 10,
 				CvLimit = 0.01f,
-				SkipCvLimitFirstIterations = 15,
+				SkipCvLimitFirstIterations = 5,
 				CvSlidingFactor = 0.5f,
         		Metrics = new CrossEntropyForSoftmax(),
         		PackageSize = 100,
@@ -180,11 +182,11 @@ namespace RbmLettersClassification {
 				AverageLearnFactor = 0.6f,
 				Momentum = 0.96f,
         		//Regularization = new EliminationRegularization(0.001f, 1.2f)
-				Regularization = new L1Regularization(0.0001f)
+				Regularization = new L1(0.0001f)
 				//Regularization = new NoRegularization()
         	};
 			
-			var trainMethod = new ClassificationRbmTrainMethod(_trainData, _testData, 1);
+			var trainMethod = new GenerativeTrainMethod(_trainData, _testData, 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 
