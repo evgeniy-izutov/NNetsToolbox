@@ -30,7 +30,7 @@ namespace RbmLettersClassification {
         private const float FalseValue = 0.0f;
 	    private const int ImageSize = 28;
 	    private const int InputLayerSize = ImageSize*ImageSize;
-	    private const int HiddenLayerSize = 100;
+	    private const int HiddenLayerSize = 49;
         private const int OutputLayerSize = 10;
         private ClassificationRbm _neuralNet;
         private float[] _neuralNetOutput;
@@ -180,14 +180,15 @@ namespace RbmLettersClassification {
 				SpeedLowBorder = float.MinValue,
 				LearnFactorStrategy = new SqrtReverseFactor(),
 				AverageLearnFactor = 0.6f,
-				Momentum = 0.97f,
+				Momentum = 0.96f,
         		//Regularization = new Elimination(0.001f, 1.2f)
 				Regularization = new L1(0.0001f)
 				//Regularization = new NoRegularization()
         	};
 			
 			//var trainMethod = new GenerativeTrainMethod(_trainData, _testData, 1);
-			var trainMethod = new DiscriminativeTrainMethod(_trainData, _testData);
+			//var trainMethod = new DiscriminativeTrainMethod(_trainData, _testData);
+	        var trainMethod = new HybridTrainMethod(_trainData, _testData, 1, 0.01f);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

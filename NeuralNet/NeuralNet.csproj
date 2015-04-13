@@ -61,6 +61,7 @@
     <Compile Include="NeuralNets\BlockType\MultyLayerPerceptron\TrainMethods\GeneticAlgorithmTrainOnDistribution.cs" />
     <Compile Include="NeuralNets\BlockType\NeuralNetBlocks\BaseNeuralBlock.cs" />
     <Compile Include="NeuralNets\RestrictedBoltzmannMachine\ClassificationRbm\Factory\Factory.cs" />
+    <Compile Include="NeuralNets\RestrictedBoltzmannMachine\ClassificationRbm\TrainMethods\HybridTrainMethod.cs" />
     <Compile Include="NeuralNets\RestrictedBoltzmannMachine\GenerativeRbm\Factory\RbmType.cs" />
     <Compile Include="NeuralNets\RestrictedBoltzmannMachine\GenerativeRbm\Factory\Factory.cs" />
     <Compile Include="NeuralNets\RestrictedBoltzmannMachine\GenerativeRbm\NeuralNet\BinaryBinaryRbm.cs" />
