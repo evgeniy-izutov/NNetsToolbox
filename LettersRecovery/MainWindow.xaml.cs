@@ -12,7 +12,9 @@ using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MathNet.Numerics.Statistics;
 using NeuralNet;
-using NeuralNet.RestrictedBoltzmannMachine;
+using NeuralNet.GenerativeRbm;
+using NeuralNet.LeanFactorStrategy;
+using NeuralNet.RegularizationFunctions;
 using StandardTypes;
 using Point = System.Windows.Point;
 using NativeWrapper = NeuralNetNativeWrapper.RestrictedBoltzmannMachineNativeWrapper;
@@ -147,7 +149,7 @@ namespace LettersRecovery {
         }
 
         private void CreateNeuronNet(float[] visibleUnitsProbability) {
-			var neuronFactory = new RestrictedBoltzmannMachineFactory(RbmType.BinaryBinary, VisibleStatesCount, HiddenStatesCount, 
+			var neuronFactory = new Factory(RbmType.BinaryBinary, VisibleStatesCount, HiddenStatesCount, 
 				DistributionType.Uniform, visibleUnitsProbability);
             _neuralNet = (RestrictedBoltzmannMachine) neuronFactory.CreateNeuralNet();
         }
@@ -198,7 +200,7 @@ namespace LettersRecovery {
 
                 //Regularization = new NoRegularization()
         		//Regularization = new EliminationRegularization(0.001f, 1.3f)
-				Regularization = new L2Regularization(0.01f)
+				Regularization = new L2(0.01f)
         	};
 
             var gradientFunction = new CenteredGradient(0.5f,
@@ -206,8 +208,8 @@ namespace LettersRecovery {
                                                         Enumerable.Repeat(0.5f, HiddenStatesCount).ToArray());
             //var gradientFunction = new LinearGradient();
 
-	        //var trainMethod = new ContrastiveDivergence(_trainData, _testData, new LinearGradient(), 1);
-			var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 1);
+	        var trainMethod = new ContrastiveDivergence(_trainData, _testData, gradientFunction, 1);
+			//var trainMethod = new NativeWrapper.ContrastiveDivergenceNative(_trainData, _testData, gradientFunction, 1);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 
@@ -322,12 +324,14 @@ namespace LettersRecovery {
 					for (var m = 0; m < ImageSize; m++) {
 						for (var n = 0; n < ImageSize; n++) {
 							var weight = weights[index*vectorSize + m*ImageSize + n];
-							pixels[i*blocksCount*vectorSize + j*ImageSize + m*blocksCount*ImageSize + n ] = (byte) ((weight - localMin)*255.0/(localMax - localMin));
+							pixels[i*blocksCount*vectorSize + j*ImageSize + m*blocksCount*ImageSize + n ] =
+								(byte) ((weight - localMin)*255.0/(localMax - localMin));
 						}
 					}
 				}
 			}
-			var bitmapImage = BitmapSource.Create(ImageSize*blocksCount, ImageSize*blocksCount, 96d, 96d, PixelFormats.Gray8, null, pixels, ImageSize*blocksCount);
+			var bitmapImage = BitmapSource.Create(ImageSize*blocksCount, ImageSize*blocksCount,
+				96d, 96d, PixelFormats.Gray8, null, pixels, ImageSize*blocksCount);
 			var stream = new FileStream(WeightsStatPath + "weights.png", FileMode.Create);
 			var encoder = new PngBitmapEncoder();
 			encoder.Frames.Add(BitmapFrame.Create(bitmapImage));

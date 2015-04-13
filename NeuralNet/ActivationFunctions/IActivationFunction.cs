@@ -1,6 +1,6 @@
 ﻿using StandardTypes;
 
-namespace NeuralNet {
+namespace NeuralNet.ActivationFunctions {
     public interface IActivationFunction : IInvertibleFunction {
         float CalculateFirstDerivative(float x);
 		float CalculateFirstDerivative(float[] state, int index);

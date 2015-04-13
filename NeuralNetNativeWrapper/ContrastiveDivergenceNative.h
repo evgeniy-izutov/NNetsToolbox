@@ -8,6 +8,7 @@ using namespace NeuralNet;
 using namespace StandardTypes;
 using namespace System;
 using namespace System::Collections::Generic;
+using namespace NeuralNet::GenerativeRbm;
 
 namespace NeuralNetNativeWrapper {
 	namespace RestrictedBoltzmannMachineNativeWrapper {
@@ -21,14 +22,14 @@ namespace NeuralNetNativeWrapper {
 			int _nativeTrainDataSize;
 			int _nativeTestDataSize;
 		protected:
-			RestrictedBoltzmannMachine::RestrictedBoltzmannMachine^ _restrictedBoltzmannMachine;
+			RestrictedBoltzmannMachine^ _restrictedBoltzmannMachine;
 		public:
 			ContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
-                                        RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                        IGradientFunction^ gradient,
                                         int methodStepsCount);
 			ContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
                                         IList<TrainSingle^>^ testData,
-                                        RestrictedBoltzmannMachine::IGradientFunction^ gradient,
+                                        IGradientFunction^ gradient,
                                         int methodStepsCount);
 			~ContrastiveDivergenceNative(void);
 			virtual void Start(void) override;
@@ -43,7 +44,7 @@ namespace NeuralNetNativeWrapper {
 			void AllocateNativeTestData(IList<TrainSingle^>^ testData);
 			void DeleteNativeTrainData(void);
             void DeleteNativeTestData(void);
-            void AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient);
+            void AllocateNativeGradientFunction(IGradientFunction^ gradient);
             void DeleteNativeGradientFunction(void);
 		};
 	}

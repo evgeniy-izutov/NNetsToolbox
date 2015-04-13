@@ -17,10 +17,8 @@
 
 namespace NeuralNetNativeWrapper {
 	namespace RestrictedBoltzmannMachineNativeWrapper {
-		FastPersistentContrastiveDivergenceNative
-            ::FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
-                                                        RestrictedBoltzmannMachine::IGradientFunction^ gradient,
-                                                        float fastWeightsDecreaseFactor) {
+		FastPersistentContrastiveDivergenceNative::FastPersistentContrastiveDivergenceNative(
+                       IList<TrainSingle^>^ trainData, IGradientFunction^ gradient, float fastWeightsDecreaseFactor) {
 			AllocateNativeTrainData(trainData);
 
             AllocateNativeGradientFunction(gradient);
@@ -30,15 +28,14 @@ namespace NeuralNetNativeWrapper {
                                                                          _nativeGradientFunction,
                                                                          fastWeightsDecreaseFactor);
 
-			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &FastPersistentContrastiveDivergenceNative::IterationCompletedHandler));
-			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &FastPersistentContrastiveDivergenceNative::IterativeProcessFinishedHandler));
+			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this,
+                &FastPersistentContrastiveDivergenceNative::IterationCompletedHandler));
+			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this,
+                &FastPersistentContrastiveDivergenceNative::IterativeProcessFinishedHandler));
 		}
 
-		FastPersistentContrastiveDivergenceNative
-            ::FastPersistentContrastiveDivergenceNative(IList<TrainSingle^>^ trainData,
-                                                        IList<TrainSingle^>^ testData,
-                                                        RestrictedBoltzmannMachine::IGradientFunction^ gradient,
-                                                        float fastWeightsDecreaseFactor) {
+		FastPersistentContrastiveDivergenceNative::FastPersistentContrastiveDivergenceNative(
+            IList<TrainSingle^>^ trainData, IList<TrainSingle^>^ testData, IGradientFunction^ gradient, float fastWeightsDecreaseFactor) {
             AllocateNativeTrainData(trainData);
 			AllocateNativeTestData(testData);
 
@@ -50,8 +47,10 @@ namespace NeuralNetNativeWrapper {
                                                                          _nativeGradientFunction,
                                                                          fastWeightsDecreaseFactor);
 
-			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this, &FastPersistentContrastiveDivergenceNative::IterationCompletedHandler));
-			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this, &FastPersistentContrastiveDivergenceNative::IterativeProcessFinishedHandler));
+			_nativeAlgorithm->IterationCompleted = new TripleCallback(gcnew IterationCompletedCallback(this,
+                &FastPersistentContrastiveDivergenceNative::IterationCompletedHandler));
+			_nativeAlgorithm->IterativeProcessFinished = new SingleCallback(gcnew IterativeProcessFinishedCallback(this,
+                &FastPersistentContrastiveDivergenceNative::IterativeProcessFinishedHandler));
 		}
 		
 		FastPersistentContrastiveDivergenceNative::~FastPersistentContrastiveDivergenceNative(void) {
@@ -99,29 +98,31 @@ namespace NeuralNetNativeWrapper {
 
 		void FastPersistentContrastiveDivergenceNative::CreateNativeNeuralNet(INeuralNet^ neuralNet) {
 			NeuralNetNative::RestrictedBoltzmannMachine::RbmType rbmType;
-			if (dynamic_cast<RestrictedBoltzmannMachine::BinaryBinaryRbm^>(neuralNet) != nullptr) {
+			if (dynamic_cast<BinaryBinaryRbm^>(neuralNet) != nullptr) {
 				rbmType = NeuralNetNative::RestrictedBoltzmannMachine::BinaryBinary;
 			}
-			else if (dynamic_cast<RestrictedBoltzmannMachine::BinaryNreluRbm^>(neuralNet) != nullptr) {
+			else if (dynamic_cast<BinaryNreluRbm^>(neuralNet) != nullptr) {
 				rbmType = NeuralNetNative::RestrictedBoltzmannMachine::BinaryNrelu;
 			}
-			else if (dynamic_cast<RestrictedBoltzmannMachine::GaussianBinaryRbm^>(neuralNet) != nullptr) {
+			else if (dynamic_cast<GaussianBinaryRbm^>(neuralNet) != nullptr) {
 				rbmType = NeuralNetNative::RestrictedBoltzmannMachine::GaussianBinary;
 			}
-			else if (dynamic_cast<RestrictedBoltzmannMachine::GaussianNreluRbm^>(neuralNet) != nullptr) {
+			else if (dynamic_cast<GaussianNreluRbm^>(neuralNet) != nullptr) {
 				rbmType = NeuralNetNative::RestrictedBoltzmannMachine::GaussianNrelu;
 			}
 			else {
 				rbmType = NeuralNetNative::RestrictedBoltzmannMachine::ReluNrelu;
 			}
 
-			_restrictedBoltzmannMachine = dynamic_cast<RestrictedBoltzmannMachine::RestrictedBoltzmannMachine^>(neuralNet);
+			_restrictedBoltzmannMachine = dynamic_cast<RestrictedBoltzmannMachine^>(neuralNet);
 
 			int visibleStatesCount = _restrictedBoltzmannMachine->VisibleStates->Length;
 			int hiddenStatesCount = _restrictedBoltzmannMachine->HiddenStates->Length;
 			NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineFactory *nativeFactory = 
-				new NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineFactory(rbmType, visibleStatesCount, hiddenStatesCount, NeuralNetNative::StartWeightGenerator::NullDistribution);
-			_nativeNeuralNet = (NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineBase*)(nativeFactory->CreateNeuralNet());
+				new NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineFactory(rbmType, visibleStatesCount,
+                hiddenStatesCount, NeuralNetNative::StartWeightGenerator::NullDistribution);
+			_nativeNeuralNet = (NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineBase*)(
+                nativeFactory->CreateNeuralNet());
 			delete nativeFactory;
 
 			array<float>^ weights = _restrictedBoltzmannMachine->Weights;
@@ -217,12 +218,10 @@ namespace NeuralNetNativeWrapper {
 			}
 		}
 
-        void FastPersistentContrastiveDivergenceNative
-            ::AllocateNativeGradientFunction(RestrictedBoltzmannMachine::IGradientFunction^ gradient) {
+        void FastPersistentContrastiveDivergenceNative::AllocateNativeGradientFunction(IGradientFunction^ gradient) {
 
-            if (dynamic_cast<RestrictedBoltzmannMachine::CenteredGradient^>(gradient) != nullptr) {
-		    	RestrictedBoltzmannMachine::CenteredGradient^ centeredGradient =
-                    dynamic_cast<RestrictedBoltzmannMachine::CenteredGradient^>(gradient);
+            if (dynamic_cast<CenteredGradient^>(gradient) != nullptr) {
+		    	CenteredGradient^ centeredGradient = dynamic_cast<CenteredGradient^>(gradient);
                 
                 int visibleOffsetsCount = centeredGradient->VisibleOffsets.Length;
                 float *visibleOffsets = new float[visibleOffsetsCount];

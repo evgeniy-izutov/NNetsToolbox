@@ -1,4 +1,6 @@
-﻿using StandardTypes;
+﻿using NeuralNet.LeanFactorStrategy;
+using NeuralNet.RegularizationFunctions;
+using StandardTypes;
 
 namespace NeuralNet {
 	public interface ITrainProperties {
