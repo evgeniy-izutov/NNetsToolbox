@@ -30,7 +30,7 @@ namespace RbmLettersClassification {
         private const float FalseValue = 0.0f;
 	    private const int ImageSize = 28;
 	    private const int InputLayerSize = ImageSize*ImageSize;
-	    private const int HiddenLayerSize = 25;
+	    private const int HiddenLayerSize = 100;
         private const int OutputLayerSize = 10;
         private ClassificationRbm _neuralNet;
         private float[] _neuralNetOutput;
@@ -129,7 +129,7 @@ namespace RbmLettersClassification {
 
         private void CreateNeuronNet(float[] inputProbability, float[] labelProbability) {
 			var neuronFactory = new Factory(InputLayerSize, HiddenLayerSize, OutputLayerSize,
-				DistributionType.Normal, inputProbability, labelProbability);
+				DistributionType.Uniform, inputProbability, labelProbability);
             _neuralNet = neuronFactory.CreateNeuralNet() as ClassificationRbm;
         }
 
@@ -167,21 +167,21 @@ namespace RbmLettersClassification {
         private void TrainNeuralNet () {
         	_trainProperties = new TrainProperties {
         		Epsilon = 0.0001f,
-        		MaxIterationCount = 10,
+        		MaxIterationCount = 25,
 				CvLimit = 0.01f,
 				SkipCvLimitFirstIterations = 5,
-				CvSlidingFactor = 0.5f,
+				CvSlidingFactor = 0.8f,
         		Metrics = new CrossEntropyForSoftmax(),
-        		PackageSize = 100,
-				BaseLearnSpeed = 0.0001f,
-				SpeedBonus = 0.0001f,
-				SpeedPenalty = 0.9999f,
+        		PackageSize = 50,
+				BaseLearnSpeed = 0.01f,
+				SpeedBonus = 0.001f,
+				SpeedPenalty = 0.999f,
 				SpeedUpBorder = float.MaxValue,
 				SpeedLowBorder = float.MinValue,
 				LearnFactorStrategy = new SqrtReverseFactor(),
 				AverageLearnFactor = 0.6f,
-				Momentum = 0.0f,
-        		//Regularization = new EliminationRegularization(0.001f, 1.2f)
+				Momentum = 0.97f,
+        		//Regularization = new Elimination(0.001f, 1.2f)
 				Regularization = new L1(0.0001f)
 				//Regularization = new NoRegularization()
         	};
