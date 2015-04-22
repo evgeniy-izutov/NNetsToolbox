@@ -10,7 +10,10 @@ namespace StandardTypes {
 		public TrainPair() {
 		}
 
-		public TrainPair(float[] inputData, float[] outputData, HashSet<int> missedInputIndexes = null, HashSet<int> missedOutputIndexes = null) : base(inputData, missedInputIndexes) {
+		public TrainPair(float[] inputData, float[] outputData, 
+				HashSet<int> missedInputIndexes = null, 
+				HashSet<int> missedOutputIndexes = null) 
+					: base(inputData, missedInputIndexes) {
 			_outputData = outputData;
 			_missedOutputIndexes = missedOutputIndexes;
 		}
@@ -24,9 +27,6 @@ namespace StandardTypes {
 			if (source._missedOutputIndexes != null) {
 				_missedOutputIndexes = new HashSet<int>(source._missedOutputIndexes);
 			}
-
-			Id = source.Id;
-			Weight = source.Weight;
 		}
 
 		public float[] Output {

@@ -7,7 +7,7 @@ namespace StandardTypes {
 		private float[] _inputData;
 		private HashSet<int> _missedInputIndexes;
 
-		public TrainSingle() {
+		public TrainSingle() : base() {
 		}
 
 		public TrainSingle(float[] inputData, HashSet<int> missedInputIndexes = null) {
@@ -15,7 +15,7 @@ namespace StandardTypes {
 			_missedInputIndexes = missedInputIndexes;
 		}
 
-		public TrainSingle(TrainSingle source) {
+		public TrainSingle(TrainSingle source) : base(source) {
 			var sourceInputData = source._inputData;
 			_inputData = new float[sourceInputData.Length];
 			sourceInputData.CopyTo(_inputData, 0);
@@ -24,9 +24,6 @@ namespace StandardTypes {
 			if (source._missedInputIndexes != null) {
 				_missedInputIndexes = new HashSet<int>(source._missedInputIndexes);
 			}
-
-			Id = source.Id;
-			Weight = source.Weight;
 		}
 
 		public float[] Input {

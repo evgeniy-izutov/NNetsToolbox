@@ -7,7 +7,6 @@ namespace NeuralNet.ClassificationRbm {
 		private readonly RandomAccessIterator<TrainPair> _trainDataIterator;
 		private readonly IList<TrainPair> _testData;
 		private float[] _labelsPrediction;
-        private float _packageFactor;
 		private ITrainProperties _properties;
 		private ClassificationRbm _neuralNet;
 		private int _visibleStatesCount;
@@ -64,7 +63,6 @@ namespace NeuralNet.ClassificationRbm {
 			_labelsPrediction = new float[_labelsCount];
 
 			_properties = trainProperties;
-			_packageFactor = 1f/_properties.PackageSize;
 			_packagesCount = CalculatePackagesCount();
 
 			AllocateMemory();
@@ -244,19 +242,20 @@ namespace NeuralNet.ClassificationRbm {
 		}
 
 		private void TrainPackage(int packageId) {
-			//PrepareToNextPackage(_properties.PackageSize);
+			var sumPackageWeights = 0f;
+			
 			for (var i = 0; i < _properties.PackageSize; i++) {
 				var curTrainPair = _trainDataIterator.Next();
-				var input = curTrainPair.Input;
-				var labels = curTrainPair.Output;
+				sumPackageWeights += curTrainPair.Weight;
 				
-				MakePositivePhase(input, labels);
-				StorePositivePhaseData(input, labels, _neuralNet.HiddenStates);
+				MakePositivePhase(curTrainPair.Input, curTrainPair.Output);
+				StorePositivePhaseData(curTrainPair.Input, curTrainPair.Output,
+					_neuralNet.HiddenStates, curTrainPair.Weight);
 				MakeNegativePhase(packageId);
-				StoreNegativePhaseData(_neuralNet.VisibleStates, _neuralNet.Labels, _neuralNet.HiddenStates);
-				//RestoreVisibleStates(packageId);
+				StoreNegativePhaseData(_neuralNet.VisibleStates, _neuralNet.Labels,
+					_neuralNet.HiddenStates, curTrainPair.Weight);
 			}
-			MakeGradient(_packageFactor);
+			MakeGradient(1f/sumPackageWeights);
 			ModifyWeightsOfNeuronNet();
 		}
 
@@ -264,29 +263,30 @@ namespace NeuralNet.ClassificationRbm {
 			_neuralNet.HiddenLayerCalculateActivity(input, labels);
 		}
 
-		private void StorePositivePhaseData(float[] visibleStates, float[] labels, float[] hiddenStates) {
+		private void StorePositivePhaseData(float[] visibleStates, float[] labels, 
+											float[] hiddenStates, float exampleWeight) {
 			for (var j = 0; j < _hiddenStatesCount; j++) {
 				var hiddenSate = hiddenStates[j];
 				
 				var startIndex = j*_visibleStatesCount;
 				for (var i = 0; i < _visibleStatesCount; i++) {
-					_packageDerivativeForVisibleWeights[startIndex + i] += visibleStates[i]*hiddenSate;
+					_packageDerivativeForVisibleWeights[startIndex + i] += exampleWeight*visibleStates[i]*hiddenSate;
 				}
 
 				startIndex = j*_labelsCount;
 				for (var k = 0; k < _labelsCount; k++) {
-					_packageDerivativeForLabelWeights[startIndex + k] += labels[k]*hiddenSate;
+					_packageDerivativeForLabelWeights[startIndex + k] += exampleWeight*labels[k]*hiddenSate;
 				}
 
-				_packageDerivativeForHiddenBias[j] += hiddenSate;
+				_packageDerivativeForHiddenBias[j] += exampleWeight*hiddenSate;
 			}
 
 			for (var i = 0; i < _visibleStatesCount; i++) {
-				_packageDerivativeForVisibleBias[i] += visibleStates[i];
+				_packageDerivativeForVisibleBias[i] += exampleWeight*visibleStates[i];
 			}
 
 			for (var k = 0; k < _labelsCount; k++) {
-				_packageDerivativeForLabelBias[k] += labels[k];
+				_packageDerivativeForLabelBias[k] += exampleWeight*labels[k];
 			}
 		}
 
@@ -301,29 +301,30 @@ namespace NeuralNet.ClassificationRbm {
 			_neuralNet.HiddenLayerCalculateActivity();
 		}
 
-		private void StoreNegativePhaseData(float[] visibleStates, float[] labels, float[] hiddenStates) {
+		private void StoreNegativePhaseData(float[] visibleStates, float[] labels,
+											float[] hiddenStates, float exampleWeight) {
 			for (var j = 0; j < _hiddenStatesCount; j++) {
 				var hiddenSate = hiddenStates[j];
 				
 				var startIndex = j*_visibleStatesCount;
 				for (var i = 0; i < _visibleStatesCount; i++) {
-					_packageDerivativeForVisibleWeights[startIndex + i] -= visibleStates[i]*hiddenSate;
+					_packageDerivativeForVisibleWeights[startIndex + i] -= exampleWeight*visibleStates[i]*hiddenSate;
 				}
 
 				startIndex = j*_labelsCount;
 				for (var k = 0; k < _labelsCount; k++) {
-					_packageDerivativeForLabelWeights[startIndex + k] -= labels[k]*hiddenSate;
+					_packageDerivativeForLabelWeights[startIndex + k] -= exampleWeight*labels[k]*hiddenSate;
 				}
 
-				_packageDerivativeForHiddenBias[j] -= hiddenSate;
+				_packageDerivativeForHiddenBias[j] -= exampleWeight*hiddenSate;
 			}
 
 			for (var i = 0; i < _visibleStatesCount; i++) {
-				_packageDerivativeForVisibleBias[i] -= visibleStates[i];
+				_packageDerivativeForVisibleBias[i] -= exampleWeight*visibleStates[i];
 			}
 
 			for (var k = 0; k < _labelsCount; k++) {
-				_packageDerivativeForLabelBias[k] -= labels[k];
+				_packageDerivativeForLabelBias[k] -= exampleWeight*labels[k];
 			}
 		}
 

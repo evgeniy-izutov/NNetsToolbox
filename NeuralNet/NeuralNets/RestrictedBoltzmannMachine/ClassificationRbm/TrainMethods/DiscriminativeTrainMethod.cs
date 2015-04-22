@@ -7,7 +7,6 @@ namespace NeuralNet.ClassificationRbm {
 		private readonly RandomAccessIterator<TrainPair> _trainDataIterator;
 		private readonly IList<TrainPair> _testData;
 		private float[] _labelsPrediction;
-        private float _packageFactor;
 		private ITrainProperties _properties;
 		private ClassificationRbm _neuralNet;
 		private int _visibleStatesCount;
@@ -61,7 +60,6 @@ namespace NeuralNet.ClassificationRbm {
 			_labelsPrediction = new float[_labelsCount];
 
 			_properties = trainProperties;
-			_packageFactor = 1f/_properties.PackageSize;
 			_packagesCount = CalculatePackagesCount();
 
 			AllocateMemory();
@@ -241,18 +239,19 @@ namespace NeuralNet.ClassificationRbm {
 		}
 
 		private void TrainPackage(int packageId) {
+			var sumPackageWeights = 0f;
+			
 			for (var i = 0; i < _properties.PackageSize; i++) {
 				var curTrainPair = _trainDataIterator.Next();
+				sumPackageWeights += curTrainPair.Weight;
 				
-				var input = curTrainPair.Input;
-				var labels = curTrainPair.Output;
-				
-				StorePackageGradient(input, labels);
+				StorePackageGradient(curTrainPair.Input, curTrainPair.Output, curTrainPair.Weight);
 			}
+			MakeGradient(1f/sumPackageWeights);
 			ModifyWeightsOfNeuronNet();
 		}
 
-		private void StorePackageGradient(float[] visibleStates, float[] labels) {
+		private void StorePackageGradient(float[] visibleStates, float[] labels, float exampleWeight) {
 			var labelsWeights = _neuralNet.LabelsWeights;
 			
 			MakePrediction(visibleStates, _predictions, _activationSums);
@@ -268,22 +267,22 @@ namespace NeuralNet.ClassificationRbm {
 					weightedSigmaSum += sigma*(labels[k] - _predictions[k]);
 				}
 
-				_packageDerivativeForHiddenBias[j] += _packageFactor*weightedSigmaSum;
+				_packageDerivativeForHiddenBias[j] += exampleWeight*weightedSigmaSum;
 
 				startIndex = j*_visibleStatesCount;
 				for (var i = 0; i < _visibleStatesCount; i++) {
-					_packageDerivativeForVisibleWeights[startIndex + i] += _packageFactor*weightedSigmaSum*visibleStates[i];
+					_packageDerivativeForVisibleWeights[startIndex + i] += exampleWeight*weightedSigmaSum*visibleStates[i];
 				}
 				
 				startIndex = j*_labelsCount;
 				for (var k = 0; k < _labelsCount; k++) {
-					_packageDerivativeForLabelWeights[startIndex + k] += _packageFactor*_sigmaValues[k]*
+					_packageDerivativeForLabelWeights[startIndex + k] += exampleWeight*_sigmaValues[k]*
 						(labels[k] - _predictions[k]);
 				}
 			}
 
 			for (var k = 0; k < _labelsCount; k++) {
-				_packageDerivativeForLabelBias[k] += _packageFactor*(labels[k] - _predictions[k]);
+				_packageDerivativeForLabelBias[k] += exampleWeight*(labels[k] - _predictions[k]);
 			}
 		}
 
@@ -323,6 +322,26 @@ namespace NeuralNet.ClassificationRbm {
 
 			for (var k = 0; k < _labelsCount; k++) {
 				predictions[k] = (float) (_unweightedPrediction[k]/predictionsSum);
+			}
+		}
+
+		private void MakeGradient(float packageFactor) {
+			for (var j = 0; j < _hiddenStatesCount; j++) {			
+				var startIndex = j*_visibleStatesCount;
+				for (var i = 0; i < _visibleStatesCount; i++) {
+					_packageDerivativeForVisibleWeights[startIndex + i] *= packageFactor;
+				}
+
+				startIndex = j*_labelsCount;
+				for (var k = 0; k < _labelsCount; k++) {
+					_packageDerivativeForLabelWeights[startIndex + k] *= packageFactor;
+				}
+
+				_packageDerivativeForHiddenBias[j] *= packageFactor;
+			}
+
+			for (var k = 0; k < _labelsCount; k++) {
+				_packageDerivativeForLabelBias[k] *= packageFactor;
 			}
 		}
 
