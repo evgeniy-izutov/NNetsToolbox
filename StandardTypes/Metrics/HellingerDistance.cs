@@ -1,18 +1,19 @@
-﻿namespace StandardTypes {
-	public sealed class SquaredEuclidianDistance : IMetrics {
+﻿using System;
+
+namespace StandardTypes {
+	public sealed class HellingerDistance : IMetrics {
 		public float Calculate(float[] real, float[] reconstructed) {
-			var value = 0.0f;
+			var value = 1f;
 			for (var i = 0; i < real.Length; i++) {
-				var dif = real[i] - reconstructed[i];
-				value += dif*dif;
+				value -= (float) Math.Sqrt(real[i]*reconstructed[i]);
 			}
-			return 0.5f*value;
+			return 2f*value;
 		}
 
 		public float[] CalculatePartialDerivaitve(float[] real, float[] reconstructed) {
 			var result = new float[real.Length];
 			for (var i = 0; i < real.Length; i++) {
-				result[i] = reconstructed[i] - real[i];
+				result[i] = 1f - (float) Math.Sqrt(real[i]/reconstructed[i]);
 			}
 			return result;
 		}

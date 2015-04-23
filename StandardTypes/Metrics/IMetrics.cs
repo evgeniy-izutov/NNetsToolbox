@@ -1,6 +1,6 @@
 ﻿namespace StandardTypes {
 	public interface IMetrics {
-		float Calculate(float[] realOtput, float[] reconstructedOutput);
-		float[] CalculatePartialDerivaitve(float[] realOutput, float[] reconstructedOutput);
+		float Calculate(float[] real, float[] reconstructed);
+		float[] CalculatePartialDerivaitve(float[] real, float[] reconstructed);
 	}
 }

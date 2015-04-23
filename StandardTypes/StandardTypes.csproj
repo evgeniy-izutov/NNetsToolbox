@@ -50,7 +50,10 @@
     <Compile Include="IInvertibleFunction.cs" />
     <Compile Include="ItarativeProcess\IterationCompletedEventArgs.cs" />
     <Compile Include="ItarativeProcess\IterativeProcessFinishedEventArgs.cs" />
+    <Compile Include="Metrics\ChiSquaredDistance.cs" />
     <Compile Include="Metrics\CrossEntropyForSoftmax.cs" />
+    <Compile Include="Metrics\HellingerDistance.cs" />
+    <Compile Include="Metrics\KullbackLeiblerDistance.cs" />
     <Compile Include="Metrics\SquaredEuclidianDistance.cs" />
     <Compile Include="Metrics\HammingDistance.cs" />
     <Compile Include="Metrics\IMetrics.cs" />

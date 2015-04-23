@@ -2,17 +2,17 @@
 
 namespace StandardTypes {
 	public sealed class HammingDistance : IMetrics {
-		public float Calculate(float[] realOtput, float[] reconstructedOutput) {
+		public float Calculate(float[] real, float[] reconstructed) {
 			var num = 0;
-			for (var i = 0; i < realOtput.Length; i++) {
-				if (Math.Abs(realOtput[i] - reconstructedOutput[i]) > float.Epsilon) {
+			for (var i = 0; i < real.Length; i++) {
+				if (Math.Abs(real[i] - reconstructed[i]) > float.Epsilon) {
 					num++;
 				}
 			}
 			return num;
 		}
 
-		public float[] CalculatePartialDerivaitve(float[] realOutput, float[] reconstructedOutput) {
+		public float[] CalculatePartialDerivaitve(float[] real, float[] reconstructed) {
 			throw new NotImplementedException();
 		}
 	}
