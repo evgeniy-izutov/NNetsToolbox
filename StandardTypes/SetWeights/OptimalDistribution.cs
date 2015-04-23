@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StandardTypes.SetWeightsOptimizer {
+namespace StandardTypes.SetWeights {
 	public sealed class OptimalDistribution<T> : ISetWeightsGenerator<T> where T:TrainPair {
 		private const double K = 40d;
 		private const double R = 2d;

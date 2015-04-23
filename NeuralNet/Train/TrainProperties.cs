@@ -21,5 +21,12 @@ namespace NeuralNet {
 		public ILearnFactorStrategy AddedLearnFactorStrategy { get; set; }
 		public float AverageLearnFactor { get; set; }
 		public float Momentum { get; set; }
+
+		public TrainProperties() {
+			Metrics = new SquaredEuclidianDistance();
+			Regularization = new NoRegularization();
+			LearnFactorStrategy = new ConstantFactor();
+			AddedLearnFactorStrategy = new ConstantFactor();
+		}
 	}
 }

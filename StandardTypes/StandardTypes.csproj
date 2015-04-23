@@ -68,8 +68,12 @@
     <Compile Include="NormalizeMethods\SigmaComponentAnalysis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomAccessIterator.cs" />
-    <Compile Include="SetWeightsOptimizer\ISetWeightsGenerator.cs" />
-    <Compile Include="SetWeightsOptimizer\OptimalDistribution.cs" />
+    <Compile Include="SetWeights\ConstantWeights.cs" />
+    <Compile Include="SetWeights\ExponentialWeights.cs" />
+    <Compile Include="SetWeights\ISetWeightsGenerator.cs" />
+    <Compile Include="SetWeights\OptimalDistribution.cs" />
+    <Compile Include="SetWeights\UniformDistribution.cs" />
+    <Compile Include="SetWeights\ISetWeightsAdaptation.cs" />
     <Compile Include="TrainData\ICopyType.cs" />
     <Compile Include="TrainData\TrainData.cs" />
     <Compile Include="TrainData\TrainPair.cs" />

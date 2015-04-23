@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace StandardTypes.SetWeightsOptimizer {
+namespace StandardTypes.SetWeights {
 	public sealed class UniformDistribution<T> : ISetWeightsGenerator<T> where T:TrainPair {
 		public void GenerateWeights(List<T> set) {
 			var value = 1f/set.Count;

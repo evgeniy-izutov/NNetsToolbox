@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace StandardTypes.SetWeightsOptimizer {
+namespace StandardTypes.SetWeights {
 	public interface ISetWeightsGenerator<T> where T:TrainPair {
 		void GenerateWeights(List<T> set);
 	}
