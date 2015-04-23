@@ -13,10 +13,10 @@ using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MathNet.Numerics.Statistics;
 using NeuralNet;
 using NeuralNet.ActivationFunctions;
-using NeuralNet.LeanFactorStrategy;
 using NeuralNet.MultyLayerPerceptron;
 using NeuralNet.RegularizationFunctions;
 using StandardTypes;
+using StandardTypes.FactorStrategy;
 
 namespace LettersClassification {
     /// <summary>
@@ -46,7 +46,7 @@ namespace LettersClassification {
         private INormalizeMethod _normalizeMethod;
         private float[] _coordinateX, _coordinateY;
         private EnumerableDataSource<float> _changedDataSource;
-    	private TrainProperties _trainProperties;
+    	private TrainProperties<TrainPair>_trainProperties;
 		private ObservableDataSource<Point> _sourceTrain;
 		private ObservableDataSource<Point> _sourceCrossValidation;
 		private ObservableDataSource<Point>[] _preTrainedProgress;
@@ -280,7 +280,7 @@ namespace LettersClassification {
 		}
         
         private void TrainNeuralNet () {
-        	_trainProperties = new TrainProperties {
+        	_trainProperties = new TrainProperties<TrainPair> {
         		Epsilon = 0.0001f,
         		MaxIterationCount = 25,
 				CvLimit = 0.01f,
@@ -305,7 +305,8 @@ namespace LettersClassification {
 			//_testData = BuildPretranedData(_testData);
 			
 			//var trainMethod = new BackPropagationAlgorithm(_trainData, _testData);
-			var trainMethod = new NeuralNetNativeWrapper.MultyLayerPerceptronNativeWrapper.BackPropagationAlgorithmNative(_trainData, _testData);
+			var trainMethod = new NeuralNetNativeWrapper.MultyLayerPerceptronNativeWrapper
+				.BackPropagationAlgorithmNative(_trainData, _testData);
             trainMethod.InitilazeMethod(_neuralNet, _trainProperties);
             trainMethod.IterationCompleted += TrainingIterationCompleted;
 

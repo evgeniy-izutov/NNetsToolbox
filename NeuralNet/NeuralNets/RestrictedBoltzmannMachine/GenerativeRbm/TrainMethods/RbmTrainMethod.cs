@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using StandardTypes;
 
 namespace NeuralNet.GenerativeRbm {
-	public abstract class RbmTrainMethod : TrainMethod {
+	public abstract class RbmTrainMethod : TrainMethod<TrainSingle> {
 		private readonly RandomAccessIterator<TrainSingle> _trainDataIterator;
 		private readonly IList<TrainSingle> _testData;
 		private readonly IGradientFunction _gradientFunction;
 		private float[] _neuronNetOutput;
         private float packageFactor;
 		protected RbmGradients gradients;
-		protected ITrainProperties properties;
+		protected ITrainProperties<TrainSingle> properties;
 		protected RestrictedBoltzmannMachine neuralNet;
 		protected int visibleStatesCount;
 		protected int hiddenStatesCount;
@@ -28,7 +28,7 @@ namespace NeuralNet.GenerativeRbm {
 			_gradientFunction = gradient;
 		}
 
-		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties trainProperties) {
+		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties<TrainSingle> trainProperties) {
 			if (!(neuralNet is RestrictedBoltzmannMachine)) {
 				throw new ArgumentException("Neural net has other structure");
 			}
@@ -66,7 +66,7 @@ namespace NeuralNet.GenerativeRbm {
 			}
 		}
 
-		public override ITrainProperties Properties {
+		public override ITrainProperties<TrainSingle> Properties {
 			get { return properties; }
 		}
 

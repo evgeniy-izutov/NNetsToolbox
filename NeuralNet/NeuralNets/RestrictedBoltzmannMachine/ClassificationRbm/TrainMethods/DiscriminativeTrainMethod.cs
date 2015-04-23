@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using StandardTypes;
 
 namespace NeuralNet.ClassificationRbm {
-	public sealed class DiscriminativeTrainMethod : TrainMethod {
+	public sealed class DiscriminativeTrainMethod : TrainMethod<TrainPair> {
 		private readonly RandomAccessIterator<TrainPair> _trainDataIterator;
 		private readonly IList<TrainPair> _testData;
+		private readonly float[] _trainErrors;
 		private float[] _labelsPrediction;
-		private ITrainProperties _properties;
+		private ITrainProperties<TrainPair> _properties;
 		private ClassificationRbm _neuralNet;
 		private int _visibleStatesCount;
 		private int _hiddenStatesCount;
@@ -40,14 +41,16 @@ namespace NeuralNet.ClassificationRbm {
 
 		public DiscriminativeTrainMethod(IList<TrainPair> trainData) {
 			_trainDataIterator = new RandomAccessIterator<TrainPair>(trainData);
+			_trainErrors = new float[trainData.Count];
 		}
 
 		public DiscriminativeTrainMethod(IList<TrainPair> trainData, IList<TrainPair> testData) {
 			_trainDataIterator = new RandomAccessIterator<TrainPair>(trainData);
 			_testData = testData;
+			_trainErrors = new float[trainData.Count];
 		}
 		
-		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties trainProperties) {
+		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties<TrainPair> trainProperties) {
 			if (!(neuralNet is ClassificationRbm)) {
 				throw new ArgumentException("Neural net has other structure");
 			}
@@ -73,7 +76,7 @@ namespace NeuralNet.ClassificationRbm {
 			}
 		}
 
-		public override ITrainProperties Properties {
+		public override ITrainProperties<TrainPair> Properties {
 			get { return _properties; }
 		}
 
@@ -181,10 +184,12 @@ namespace NeuralNet.ClassificationRbm {
 				
 				TrainEpoch();
 
-				trainError = TestModel(_trainDataIterator.Collection);
+				trainError = TestModel(_trainDataIterator.Collection, _trainErrors);
 			    var testError = TestModel(_testData);
 				slidingTestError = _properties.CvSlidingFactor*testError +
 					(1f - _properties.CvSlidingFactor)*slidingTestError;
+
+				_properties.SetWeightsAdaptation.ChangeWeights(_trainDataIterator.Collection, _trainErrors);
 				
 				if (slidingTestError < minSlidingTestError) {
 					minSlidingTestError = slidingTestError;
@@ -205,7 +210,9 @@ namespace NeuralNet.ClassificationRbm {
 				
 				TrainEpoch();
 
-				trainError = TestModel(_trainDataIterator.Collection);
+				trainError = TestModel(_trainDataIterator.Collection, _trainErrors);
+
+				_properties.SetWeightsAdaptation.ChangeWeights(_trainDataIterator.Collection, _trainErrors);
 
                 OnIterationCompleted(new IterationCompletedEventArgs(_epochNumber, trainError, float.NaN));
 				_epochNumber++;
@@ -227,6 +234,20 @@ namespace NeuralNet.ClassificationRbm {
 				var testExample = data[i];
 				_neuralNet.Predict(testExample.Input, _labelsPrediction);
 				sumError += _properties.Metrics.Calculate(testExample.Output, _labelsPrediction);
+			}
+			return sumError / data.Count;
+		}
+
+		private float TestModel(IList<TrainPair> data, float[] errors) {
+			var sumError = 0.0f;
+			for (var i = 0; i < data.Count; i++) {
+				var testExample = data[i];
+
+				_neuralNet.Predict(testExample.Input, _labelsPrediction);
+				
+				var error = _properties.Metrics.Calculate(testExample.Output, _labelsPrediction);
+				errors[i] = error;
+				sumError += error;
 			}
 			return sumError / data.Count;
 		}

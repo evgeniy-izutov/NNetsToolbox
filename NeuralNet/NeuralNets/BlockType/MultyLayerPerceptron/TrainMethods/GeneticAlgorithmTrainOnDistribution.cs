@@ -4,12 +4,12 @@ using GeneticAlgorithm;
 using StandardTypes;
 
 namespace NeuralNet.MultyLayerPerceptron {
-	public sealed class GeneticAlgorithmTrainOnDistribution : TrainMethod {
+	public sealed class GeneticAlgorithmTrainOnDistribution : TrainMethod<TrainPair> {
 		private GeneticAlgorithm.GeneticAlgorithm _geneticAlgorithm;
         private MultyLayerPerceptron _neuralNet;
         private readonly IList<TrainPair> _trainingData;
 		private readonly INormalizeMethod _normilazeMethod;
-		private ITrainProperties _properties;
+		private ITrainProperties<TrainPair> _properties;
 		private readonly float[] _distribution;
         private readonly int _populationSzie;
         private const int TournamentSize = 2;
@@ -29,7 +29,7 @@ namespace NeuralNet.MultyLayerPerceptron {
 			_normilazeMethod = normilazeMethod;
 		}
 
-		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties trainProperties) {
+		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties<TrainPair> trainProperties) {
 			var net = neuralNet as MultyLayerPerceptron;
 			if (net != null) {
                 _neuralNet = net;
@@ -41,7 +41,7 @@ namespace NeuralNet.MultyLayerPerceptron {
             ProcessSate = IterativeProcessState.NotStarted;
 		}
 
-		public override ITrainProperties Properties {
+		public override ITrainProperties<TrainPair> Properties {
 			get { return _properties; }
 		}
 

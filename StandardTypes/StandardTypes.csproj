@@ -50,6 +50,11 @@
     <Compile Include="DataLoaders\MnistDataLoader.cs" />
     <Compile Include="DataLoaders\TextDataLoader.cs" />
     <Compile Include="DistributionType.cs" />
+    <Compile Include="FactorStrategy\ConstantFactor.cs" />
+    <Compile Include="FactorStrategy\IFactorStrategy.cs" />
+    <Compile Include="FactorStrategy\LinearFactor.cs" />
+    <Compile Include="FactorStrategy\ReverseFactor.cs" />
+    <Compile Include="FactorStrategy\SqrtReverseFactor.cs" />
     <Compile Include="IInvertibleFunction.cs" />
     <Compile Include="ItarativeProcess\IterationCompletedEventArgs.cs" />
     <Compile Include="ItarativeProcess\IterativeProcessFinishedEventArgs.cs" />

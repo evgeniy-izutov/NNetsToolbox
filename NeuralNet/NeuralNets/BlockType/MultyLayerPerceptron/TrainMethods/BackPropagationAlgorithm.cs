@@ -6,10 +6,10 @@ using NeuralNet.NeuralNetBlocks;
 using StandardTypes;
 
 namespace NeuralNet.MultyLayerPerceptron {
-	public sealed class BackPropagationAlgorithm : TrainMethod {
+	public sealed class BackPropagationAlgorithm : TrainMethod<TrainPair> {
 		private readonly RandomAccessIterator<TrainPair> _trainDataIterator;
         private readonly IList<TrainPair> _testData;
-		private ITrainProperties _properties;
+		private ITrainProperties<TrainPair> _properties;
 		private MultyLayerPerceptron _neuralNet;
 		private BaseNeuralBlock[] _layers;
 		private int[] _neuronNetLayersStruct;
@@ -39,7 +39,7 @@ namespace NeuralNet.MultyLayerPerceptron {
             _testData = testData;
         }
 
-		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties trainProperties) {
+		public override void InitilazeMethod(INeuralNet neuralNet, ITrainProperties<TrainPair> trainProperties) {
 			if (!(neuralNet is MultyLayerPerceptron)) {
 				throw new ArgumentException("Neural net has other structure");
 			}
@@ -54,7 +54,7 @@ namespace NeuralNet.MultyLayerPerceptron {
 			ProcessSate = IterativeProcessState.NotStarted;
 		}
 
-		public override ITrainProperties Properties {
+		public override ITrainProperties<TrainPair> Properties {
 			get { return _properties; }
 		}
 

@@ -13,9 +13,9 @@ using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MathNet.Numerics.Statistics;
 using NeuralNet;
 using NeuralNet.GenerativeRbm;
-using NeuralNet.LeanFactorStrategy;
 using NeuralNet.RegularizationFunctions;
 using StandardTypes;
+using StandardTypes.FactorStrategy;
 using Point = System.Windows.Point;
 using NativeWrapper = NeuralNetNativeWrapper.RestrictedBoltzmannMachineNativeWrapper;
 
@@ -38,7 +38,7 @@ namespace LettersRecovery {
         private float[] _neuralNetOutput;
         private List<TrainSingle> _trainData;
 		private List<TrainSingle> _testData;
-    	private TrainProperties _trainProperties;
+    	private TrainProperties<TrainSingle> _trainProperties;
 		private ObservableDataSource<Point> _sourceTrain;
 		private ObservableDataSource<Point> _sourceTest;
 		private readonly Thread _workingThread;
@@ -177,7 +177,7 @@ namespace LettersRecovery {
         
         private void TrainNeuralNet(float[] visibleUnitsProbability) {
             const int iterationCount = 15;
-            _trainProperties = new TrainProperties {
+            _trainProperties = new TrainProperties<TrainSingle> {
         		Epsilon = 0.001f,
         		MaxIterationCount = iterationCount,
         		Metrics = new HammingDistance(),

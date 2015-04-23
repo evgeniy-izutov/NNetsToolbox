@@ -10,7 +10,7 @@ using namespace System::Collections::Generic;
 
 namespace NeuralNetNativeWrapper {
 	namespace MultyLayerPerceptronNativeWrapper {
-		public ref class BackPropagationAlgorithmNative	: public TrainMethodNative, public System::IDisposable {
+        public ref class BackPropagationAlgorithmNative	: public TrainMethodNative<TrainPair^>, public System::IDisposable {
 		internal:
 			NeuralNetNative::MultyLayerPerceptron::BackPropagationAlgorithm *_nativeAlgorithm;
 			NeuralNetNative::MultyLayerPerceptron::MultyLayerPerceptron *_nativeNeuralNet;

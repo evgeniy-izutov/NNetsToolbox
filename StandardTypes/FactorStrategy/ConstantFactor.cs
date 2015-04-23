@@ -1,5 +1,5 @@
-﻿namespace NeuralNet.LeanFactorStrategy {
-	public sealed class ConstantFactor : ILearnFactorStrategy {
+﻿namespace StandardTypes.FactorStrategy {
+	public sealed class ConstantFactor : IFactorStrategy {
 		private readonly float _constValue;
 		
 		public ConstantFactor(float constValue = 1f) {
@@ -11,6 +11,10 @@
 		}
 
 		public float GetFactor(int iterNumber) {
+			return _constValue;
+		}
+
+		public float GetFactor() {
 			return _constValue;
 		}
 	}

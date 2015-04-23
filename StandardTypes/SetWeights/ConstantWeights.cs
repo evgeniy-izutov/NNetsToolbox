@@ -2,7 +2,7 @@
 
 namespace StandardTypes.SetWeights {
 	public sealed class ConstantWeights<T> : ISetWeightsAdaptation<T> where T:TrainData {
-		public void ChangeWeights(List<T> set, float[] errors) {
+		public void ChangeWeights(IList<T> set, float[] errors) {
 		}
 	}
 }

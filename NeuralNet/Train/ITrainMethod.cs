@@ -2,9 +2,9 @@
 using StandardTypes;
 
 namespace NeuralNet {
-	public interface ITrainMethod {
-		void InitilazeMethod(INeuralNet neuralNet, ITrainProperties trainProperties);
-    	ITrainProperties Properties { get; }
+	public interface ITrainMethod<T> where T:TrainData {
+		void InitilazeMethod(INeuralNet neuralNet, ITrainProperties<T> trainProperties);
+    	ITrainProperties<T> Properties { get; }
 		void Start();
 		void Stop();
 		event EventHandler<IterationCompletedEventArgs> IterationCompleted;

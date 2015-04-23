@@ -16,10 +16,11 @@
 #include "LinearFactor.h"
 
 using namespace NeuralNet::RegularizationFunctions;
-using namespace NeuralNet::LeanFactorStrategy;
+using namespace StandardTypes::FactorStrategy;
 
 namespace NeuralNetNativeWrapper {
-	void TrainMethodNative::InitilazeMethod(INeuralNet^ neuralNet, ITrainProperties^ trainProperties) {
+    generic<class T> where T:TrainData
+	void TrainMethodNative<T>::InitilazeMethod(INeuralNet^ neuralNet, ITrainProperties<T>^ trainProperties) {
 		DeleteNativeNeuralNet();
 		DeleteNativeProperties();
 		_properties = trainProperties;
@@ -28,11 +29,13 @@ namespace NeuralNetNativeWrapper {
 		InitilazeNativeAlgorithm();
 	}
 
-	ITrainProperties^ TrainMethodNative::Properties::get(void) {
+    generic<class T> where T:TrainData
+	ITrainProperties<T>^ TrainMethodNative<T>::Properties::get(void) {
 		return _properties;
 	}
 
-	void TrainMethodNative::CreateNativeTrainProperties(ITrainProperties^ trainProperties) {
+    generic<class T> where T:TrainData
+	void TrainMethodNative<T>::CreateNativeTrainProperties(ITrainProperties<T>^ trainProperties) {
 		_nativeTrainProperties = new NeuralNetNative::TrainProperties();
 		_nativeTrainProperties->Epsilon = trainProperties->Epsilon;
 		_nativeTrainProperties->MaxIterationCount = trainProperties->MaxIterationCount;
@@ -82,7 +85,7 @@ namespace NeuralNetNativeWrapper {
 		_nativeTrainProperties->Regularization = nativeRegularization;
 
 		NeuralNetNative::LearnFactorStrategy *nativeLearnFactorStrategy;
-		ILearnFactorStrategy^ learnFactorStrategy = trainProperties->LearnFactorStrategy;
+		IFactorStrategy^ learnFactorStrategy = trainProperties->LearnFactorStrategy;
 		if (dynamic_cast<ConstantFactor^>(learnFactorStrategy) != nullptr) {
 			nativeLearnFactorStrategy = new NeuralNetNative::ConstantFactor(dynamic_cast<ConstantFactor^>(
                 learnFactorStrategy)->ConstantValue);
@@ -100,7 +103,7 @@ namespace NeuralNetNativeWrapper {
 		_nativeTrainProperties->FactorStrategy = nativeLearnFactorStrategy;
 
 		NeuralNetNative::LearnFactorStrategy *nativeAddedLearnFactorStrategy;
-		ILearnFactorStrategy^ addedLearnFactorStrategy = trainProperties->AddedLearnFactorStrategy;
+		IFactorStrategy^ addedLearnFactorStrategy = trainProperties->AddedLearnFactorStrategy;
 		if (dynamic_cast<ConstantFactor^>(addedLearnFactorStrategy) != nullptr) {
 			nativeAddedLearnFactorStrategy = new NeuralNetNative::ConstantFactor(dynamic_cast<ConstantFactor^>(
                 addedLearnFactorStrategy)->ConstantValue);
@@ -117,8 +120,9 @@ namespace NeuralNetNativeWrapper {
 		}
 		_nativeTrainProperties->AddedFactorStrategy = nativeAddedLearnFactorStrategy;
 	}
-		
-	void TrainMethodNative::DeleteNativeProperties(void) {
+
+    generic<class T> where T:TrainData
+	void TrainMethodNative<T>::DeleteNativeProperties(void) {
 		if (_nativeTrainProperties != 0) {
 			delete _nativeTrainProperties->Metrics;
 			delete _nativeTrainProperties->Regularization;
@@ -127,11 +131,13 @@ namespace NeuralNetNativeWrapper {
 		}
 	}
 
-	void TrainMethodNative::IterationCompletedHandler(int iterationNum, float iterationValue, float addedIterationValue) {
+    generic<class T> where T:TrainData
+	void TrainMethodNative<T>::IterationCompletedHandler(int iterationNum, float iterationValue, float addedIterationValue) {
 		IterationCompleted(this, gcnew IterationCompletedEventArgs(iterationNum, iterationValue, addedIterationValue));
 	}
 
-	void TrainMethodNative::IterativeProcessFinishedHandler(int iterationCount) {
+    generic<class T> where T:TrainData
+	void TrainMethodNative<T>::IterativeProcessFinishedHandler(int iterationCount) {
 		IterativeProcessFinished(this, gcnew IterativeProcessFinishedEventArgs(iterationCount));
 	}
 }

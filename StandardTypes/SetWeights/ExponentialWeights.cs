@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using StandardTypes.FactorStrategy;
 
 namespace StandardTypes.SetWeights {
 	public sealed class ExponentialWeights<T> : ISetWeightsAdaptation<T> where T:TrainData {
-		private readonly double _weightFactor;
+		private readonly IFactorStrategy _factorStrategy;
 
-		public ExponentialWeights(float weightFactor) {
-			_weightFactor = weightFactor;
+		public ExponentialWeights(IFactorStrategy factorStrategy) {
+			_factorStrategy = factorStrategy;
 		}
 
-		public void ChangeWeights(List<T> set, float[] errors) {
+		public void ChangeWeights(IList<T> set, float[] errors) {
 			var sumWeights = 0d;
 			for (var i = 0; i < errors.Length; i++) {
 				var example = set[i];
 				
-				var newWeight = example.Weight*Math.Exp(_weightFactor*errors[i]);
+				var newWeight = example.Weight*Math.Exp(_factorStrategy.GetFactor()*errors[i]);
 				sumWeights += newWeight;
 				example.Weight = (float) newWeight;
 			}

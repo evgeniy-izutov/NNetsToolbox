@@ -12,7 +12,7 @@ using namespace NeuralNet::GenerativeRbm;
 
 namespace NeuralNetNativeWrapper {
 	namespace RestrictedBoltzmannMachineNativeWrapper {
-		public ref class FastPersistentContrastiveDivergenceNative : public TrainMethodNative, public System::IDisposable {
+        public ref class FastPersistentContrastiveDivergenceNative : public TrainMethodNative<TrainSingle^>, public System::IDisposable {
 		internal:
 			NeuralNetNative::RestrictedBoltzmannMachine::FastPersistentContrastiveDivergence *_nativeAlgorithm;
 			NeuralNetNative::RestrictedBoltzmannMachine::RestrictedBoltzmannMachineBase *_nativeNeuralNet;

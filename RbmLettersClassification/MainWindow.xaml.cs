@@ -12,9 +12,10 @@ using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using NeuralNet;
 using NeuralNet.ClassificationRbm;
-using NeuralNet.LeanFactorStrategy;
 using NeuralNet.RegularizationFunctions;
 using StandardTypes;
+using StandardTypes.FactorStrategy;
+using StandardTypes.SetWeights;
 
 namespace RbmLettersClassification {
     /// <summary>
@@ -40,7 +41,7 @@ namespace RbmLettersClassification {
 	    private byte[][] _sourceTestImages;
         private float[] _coordinateX, _coordinateY;
         private EnumerableDataSource<float> _changedDataSource;
-    	private TrainProperties _trainProperties;
+    	private TrainProperties<TrainPair> _trainProperties;
 		private ObservableDataSource<Point> _sourceTrain;
 		private ObservableDataSource<Point> _sourceCrossValidation;
 		private readonly Thread _workingThread;
@@ -165,7 +166,7 @@ namespace RbmLettersClassification {
 	    }
 
         private void TrainNeuralNet () {
-        	_trainProperties = new TrainProperties {
+        	_trainProperties = new TrainProperties<TrainPair> {
         		Epsilon = 0.0001f,
         		MaxIterationCount = 25,
 				CvLimit = 0.01f,
@@ -181,6 +182,9 @@ namespace RbmLettersClassification {
 				LearnFactorStrategy = new SqrtReverseFactor(),
 				AverageLearnFactor = 0.6f,
 				Momentum = 0.96f,
+
+				SetWeightsAdaptation = new ExponentialWeights<TrainPair>(new SqrtReverseFactor(0.1f)),
+
         		//Regularization = new Elimination(0.001f, 1.2f)
 				Regularization = new L1(0.0001f)
 				//Regularization = new NoRegularization()

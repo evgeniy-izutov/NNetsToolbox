@@ -1,9 +1,10 @@
-﻿using NeuralNet.LeanFactorStrategy;
-using NeuralNet.RegularizationFunctions;
+﻿using NeuralNet.RegularizationFunctions;
 using StandardTypes;
+using StandardTypes.FactorStrategy;
+using StandardTypes.SetWeights;
 
 namespace NeuralNet {
-	public interface ITrainProperties {
+	public interface ITrainProperties<T> where T:TrainData {
 		IMetrics Metrics { get; set; }
 		Regularization Regularization { get; set; }
 		float Epsilon { get; set; }
@@ -17,9 +18,10 @@ namespace NeuralNet {
 		float SpeedPenalty { get; set; }
 		float SpeedLowBorder { get; set; }
 		float SpeedUpBorder { get; set; }
-		ILearnFactorStrategy LearnFactorStrategy { get; set; }
-		ILearnFactorStrategy AddedLearnFactorStrategy { get; set; }
+		IFactorStrategy LearnFactorStrategy { get; set; }
+		IFactorStrategy AddedLearnFactorStrategy { get; set; }
 		float AverageLearnFactor { get; set; }
 		float Momentum { get; set; }
+		ISetWeightsAdaptation<T> SetWeightsAdaptation { get; set; }
 	}
 }
