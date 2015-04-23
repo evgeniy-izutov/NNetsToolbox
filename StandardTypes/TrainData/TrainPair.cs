@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace StandardTypes {
 	[Serializable]
-	public sealed class TrainPair : TrainSingle, ICopyType<TrainPair> {
+	public class TrainPair : TrainSingle, ICopyType<TrainPair> {
 		private float[] _outputData;
 		private HashSet<int> _missedOutputIndexes;
 
